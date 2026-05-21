@@ -1,0 +1,313 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/feffe43a/
+#handOverlay	style.css	209;"	i
+#nextMatchBtn	style.css	427;"	i
+#undoBtn	style.css	297;"	i
+#undoBtn	style.css	64;"	i
+#undoBtn:active	style.css	86;"	i
+#undoBtn:disabled	style.css	90;"	i
+#undoBtn:hover	style.css	81;"	i
+.currentGame	style.css	166;"	c
+.error-back	style.css	199;"	c
+.error-common	style.css	201;"	c
+.error-fault	style.css	202;"	c
+.error-front	style.css	200;"	c
+.error-popup	style.css	245;"	c
+.gameHeader	style.css	144;"	c
+.gameTitle	style.css	139;"	c
+.hand-popup	style.css	223;"	c
+.hand-subtitle	style.css	258;"	c
+.hand-title	style.css	251;"	c
+.hidden	style.css	14;"	c
+.history .stat-area	style.css	333;"	c
+.history .stat-btn	style.css	330;"	c
+.matchEnd	style.css	176;"	c
+.nameCell	style.css	125;"	c
+.player-area	style.css	19;"	c
+.player-area	style.css	293;"	c
+.player-group	style.css	28;"	c
+.playerBtn	style.css	36;"	c
+.playerBtn.selected.teamA	style.css	57;"	c
+.playerBtn.selected.teamB	style.css	60;"	c
+.playerName	style.css	161;"	c
+.scoreboard	style.css	98;"	c
+.scoreboard td	style.css	106;"	s
+.scoreboard td:first-child	style.css	114;"	s
+.scoreboard td:last-child	style.css	132;"	s
+.scoreboard th	style.css	107;"	s
+.scoreboard th.playerHeader	style.css	149;"	c
+.scoreboard th:first-child	style.css	115;"	s
+.scoreboard th:last-child	style.css	131;"	s
+.serve-btn	style.css	206;"	c
+.serverMark	style.css	154;"	c
+.shot .stat-area	style.css	349;"	c
+.shot .stat-btn	style.css	346;"	c
+.shot-back	style.css	181;"	c
+.shot-common	style.css	183;"	c
+.shot-front	style.css	182;"	c
+.shot-grid	style.css	185;"	c
+.shot-header-row	style.css	361;"	c
+.shot-title	style.css	369;"	c
+.shot-toggle-btn	style.css	374;"	c
+.shot-toggle-btn:hover	style.css	385;"	c
+.stat-area	style.css	321;"	c
+.stat-btn	style.css	312;"	c
+.stats .stat-area	style.css	341;"	c
+.stats .stat-btn	style.css	338;"	c
+.stats-block	style.css	307;"	c
+.stats-line	style.css	353;"	c
+.stats-line .name	style.css	390;"	c
+.stats-line .stat	style.css	395;"	c
+.stats-row	style.css	284;"	c
+.stats-row	style.css	302;"	c
+.teamA	style.css	45;"	c
+.teamAActive	style.css	275;"	c
+.teamB	style.css	49;"	c
+.teamBActive	style.css	279;"	c
+.toggle-header	style.css	399;"	c
+.toggle-header:hover	style.css	417;"	c
+.toggle-icon	style.css	421;"	c
+.win	style.css	171;"	c
+.win-popup	style.css	239;"	c
+0	manifest.json	10;"	o	array:icons
+1	manifest.json	15;"	o	array:icons
+A	js/history.js	171;"	c	class:headerRow.appendChild.appendChild.appendChild
+A1	index.html	29;"	I
+A1	js/app.js	47;"	p	class:state.players
+A1	js/app.js	53;"	p	class:state.players
+A1	js/state.js	46;"	c	class:AnonymousClass450aa1dd0101.serveStats
+A1	js/state.js	54;"	c	class:AnonymousClass450aa1dd0101.receiveStats
+A1	js/ui.js	418;"	c	class:state.serveStats
+A1	js/ui.js	425;"	c	class:state.receiveStats
+A2	index.html	30;"	I
+A2	js/app.js	54;"	p	class:state.players
+A2	js/state.js	47;"	c	class:AnonymousClass450aa1dd0101.serveStats
+A2	js/state.js	55;"	c	class:AnonymousClass450aa1dd0101.receiveStats
+A2	js/ui.js	419;"	c	class:state.serveStats
+A2	js/ui.js	426;"	c	class:state.receiveStats
+AnonymousClass450aa1dd0101	js/state.js	7;"	c
+B	js/history.js	172;"	c	class:headerRow.appendChild.appendChild.appendChild
+B1	index.html	33;"	I
+B1	js/app.js	48;"	p	class:state.players
+B1	js/app.js	55;"	p	class:state.players
+B1	js/state.js	48;"	c	class:AnonymousClass450aa1dd0101.serveStats
+B1	js/state.js	56;"	c	class:AnonymousClass450aa1dd0101.receiveStats
+B1	js/ui.js	420;"	c	class:state.serveStats
+B1	js/ui.js	427;"	c	class:state.receiveStats
+B2	index.html	34;"	I
+B2	js/app.js	56;"	p	class:state.players
+B2	js/state.js	49;"	c	class:AnonymousClass450aa1dd0101.serveStats
+B2	js/state.js	57;"	c	class:AnonymousClass450aa1dd0101.receiveStats
+B2	js/ui.js	421;"	c	class:state.serveStats
+B2	js/ui.js	428;"	c	class:state.receiveStats
+CACHE_NAME	service-worker.js	1;"	C
+Features	README.md	4;"	s
+ST-Insight™	README.md	1;"	c
+_renderLock	js/state.js	66;"	p	class:AnonymousClass450aa1dd0101
+addHistory	js/history.js	10;"	f
+advanceServer	js/serve.js	63;"	f
+appendChild	js/history.js	164;"	c	class:headerRow.appendChild.appendChild
+background_color	manifest.json	6;"	s
+body	style.css	1;"	s
+btnA1	index.html	81;"	I
+btnA2	index.html	82;"	I
+btnB1	index.html	83;"	I
+btnB2	index.html	84;"	I
+buildServerRotation	js/serve.js	18;"	f
+button	style.css	7;"	s
+cancelHand	js/app.js	169;"	f
+checkGame	js/app.js	323;"	f
+checkGameSet	js/app.js	423;"	f
+color	js/state.js	88;"	c	class:shotStatsConfig
+createScoreboard	js/ui.js	13;"	f
+createShotButtons	js/ui.js	165;"	f
+currentGame	js/state.js	22;"	p	class:AnonymousClass450aa1dd0101.score
+currentGame	js/ui.js	407;"	p	class:state.score
+currentServer	js/state.js	33;"	p	class:AnonymousClass450aa1dd0101
+display	manifest.json	5;"	s
+displayForNextGame	js/ui.js	143;"	f
+enableColor	js/state.js	85;"	p	class:shotStatsConfig
+error	js/history.js	171;"	p	class:headerRow.appendChild.appendChild.appendChild.A
+error	js/history.js	172;"	p	class:headerRow.appendChild.appendChild.appendChild.B
+error	js/history.js	221;"	p	class:shotArray.sort
+error	js/history.js	33;"	p	class:state.shotStats.shots
+error	js/history.js	41;"	p	class:state.shotStats.shots
+finishMatch	js/app.js	432;"	f
+firstIn	js/state.js	46;"	p	class:AnonymousClass450aa1dd0101.serveStats.A1
+firstIn	js/state.js	47;"	p	class:AnonymousClass450aa1dd0101.serveStats.A2
+firstIn	js/state.js	48;"	p	class:AnonymousClass450aa1dd0101.serveStats.B1
+firstIn	js/state.js	49;"	p	class:AnonymousClass450aa1dd0101.serveStats.B2
+firstIn	js/ui.js	418;"	p	class:state.serveStats.A1
+firstIn	js/ui.js	419;"	p	class:state.serveStats.A2
+firstIn	js/ui.js	420;"	p	class:state.serveStats.B1
+firstIn	js/ui.js	421;"	p	class:state.serveStats.B2
+firstTotal	js/state.js	46;"	p	class:AnonymousClass450aa1dd0101.serveStats.A1
+firstTotal	js/state.js	47;"	p	class:AnonymousClass450aa1dd0101.serveStats.A2
+firstTotal	js/state.js	48;"	p	class:AnonymousClass450aa1dd0101.serveStats.B1
+firstTotal	js/state.js	49;"	p	class:AnonymousClass450aa1dd0101.serveStats.B2
+firstTotal	js/ui.js	418;"	p	class:state.serveStats.A1
+firstTotal	js/ui.js	419;"	p	class:state.serveStats.A2
+firstTotal	js/ui.js	420;"	p	class:state.serveStats.B1
+firstTotal	js/ui.js	421;"	p	class:state.serveStats.B2
+gameA	js/state.js	20;"	p	class:AnonymousClass450aa1dd0101.score
+gameA	js/ui.js	405;"	p	class:state.score
+gameB	js/state.js	21;"	p	class:AnonymousClass450aa1dd0101.score
+gameB	js/ui.js	406;"	p	class:state.score
+gameFinished	js/state.js	76;"	p	class:AnonymousClass450aa1dd0101
+gameResults	js/state.js	25;"	p	class:AnonymousClass450aa1dd0101
+getCurrentServer	js/serve.js	10;"	f
+getServeRate	js/serve.js	194;"	f
+handleShotInput	js/app.js	124;"	f
+high	js/state.js	89;"	p	class:shotStatsConfig.color
+highlightBest	js/state.js	86;"	p	class:shotStatsConfig
+highlightWinner	js/ui.js	127;"	f
+history	js/state.js	41;"	p	class:AnonymousClass450aa1dd0101
+historyArea	index.html	104;"	I
+historyStack	js/state.js	42;"	p	class:AnonymousClass450aa1dd0101
+icons	manifest.json	9;"	a
+initMatchState	js/ui.js	401;"	f
+initPlayers	js/app.js	99;"	f
+initUIState	js/ui.js	445;"	f
+is1stServe	js/state.js	32;"	p	class:AnonymousClass450aa1dd0101
+isFinalGame	js/state.js	38;"	p	class:AnonymousClass450aa1dd0101
+isSingles	js/state.js	11;"	p	class:AnonymousClass450aa1dd0101
+low	js/state.js	91;"	p	class:shotStatsConfig.color
+match	index.html	59;"	I
+matchFinished	js/state.js	79;"	p	class:AnonymousClass450aa1dd0101
+mid	js/state.js	90;"	p	class:shotStatsConfig.color
+name	js/app.js	140;"	p	class:state.pendingShot
+name	manifest.json	2;"	s
+nextMatch	js/app.js	454;"	f
+nextMatchBtn	index.html	97;"	I
+noHandShots	js/app.js	8;"	C
+openPair	js/state.js	71;"	p	class:AnonymousClass450aa1dd0101.ui
+openPlayers	js/state.js	70;"	p	class:AnonymousClass450aa1dd0101.ui
+orientation	manifest.json	8;"	s
+pendingShot	js/app.js	139;"	c	class:state
+pendingShot	js/state.js	60;"	p	class:AnonymousClass450aa1dd0101
+players	index.html	80;"	I
+players	js/app.js	46;"	c	class:state
+players	js/app.js	52;"	c	class:state
+players	js/state.js	10;"	p	class:AnonymousClass450aa1dd0101
+pointA	js/state.js	18;"	p	class:AnonymousClass450aa1dd0101.score
+pointA	js/ui.js	403;"	p	class:state.score
+pointB	js/state.js	19;"	p	class:AnonymousClass450aa1dd0101.score
+pointB	js/ui.js	404;"	p	class:state.score
+pushState	js/history.js	419;"	f
+receiveIn	js/state.js	54;"	p	class:AnonymousClass450aa1dd0101.receiveStats.A1
+receiveIn	js/state.js	55;"	p	class:AnonymousClass450aa1dd0101.receiveStats.A2
+receiveIn	js/state.js	56;"	p	class:AnonymousClass450aa1dd0101.receiveStats.B1
+receiveIn	js/state.js	57;"	p	class:AnonymousClass450aa1dd0101.receiveStats.B2
+receiveIn	js/ui.js	425;"	p	class:state.receiveStats.A1
+receiveIn	js/ui.js	426;"	p	class:state.receiveStats.A2
+receiveIn	js/ui.js	427;"	p	class:state.receiveStats.B1
+receiveIn	js/ui.js	428;"	p	class:state.receiveStats.B2
+receiveStats	js/state.js	53;"	c	class:AnonymousClass450aa1dd0101
+receiveStats	js/ui.js	424;"	c	class:state
+receiveTotal	js/state.js	54;"	p	class:AnonymousClass450aa1dd0101.receiveStats.A1
+receiveTotal	js/state.js	55;"	p	class:AnonymousClass450aa1dd0101.receiveStats.A2
+receiveTotal	js/state.js	56;"	p	class:AnonymousClass450aa1dd0101.receiveStats.B1
+receiveTotal	js/state.js	57;"	p	class:AnonymousClass450aa1dd0101.receiveStats.B2
+receiveTotal	js/ui.js	425;"	p	class:state.receiveStats.A1
+receiveTotal	js/ui.js	426;"	p	class:state.receiveStats.A2
+receiveTotal	js/ui.js	427;"	p	class:state.receiveStats.B1
+receiveTotal	js/ui.js	428;"	p	class:state.receiveStats.B2
+recordError	js/app.js	244;"	f
+recordShot	js/app.js	193;"	f
+removeHandChoice	js/app.js	179;"	f
+renderHistory	js/history.js	55;"	f
+renderScoreboard	js/ui.js	65;"	f
+renderServeStats	js/history.js	82;"	f
+score	js/state.js	17;"	c	class:AnonymousClass450aa1dd0101
+score	js/ui.js	402;"	c	class:state
+scoreboard	index.html	65;"	I
+secondIn	js/state.js	46;"	p	class:AnonymousClass450aa1dd0101.serveStats.A1
+secondIn	js/state.js	47;"	p	class:AnonymousClass450aa1dd0101.serveStats.A2
+secondIn	js/state.js	48;"	p	class:AnonymousClass450aa1dd0101.serveStats.B1
+secondIn	js/state.js	49;"	p	class:AnonymousClass450aa1dd0101.serveStats.B2
+secondIn	js/ui.js	418;"	p	class:state.serveStats.A1
+secondIn	js/ui.js	419;"	p	class:state.serveStats.A2
+secondIn	js/ui.js	420;"	p	class:state.serveStats.B1
+secondIn	js/ui.js	421;"	p	class:state.serveStats.B2
+secondTotal	js/state.js	46;"	p	class:AnonymousClass450aa1dd0101.serveStats.A1
+secondTotal	js/state.js	47;"	p	class:AnonymousClass450aa1dd0101.serveStats.A2
+secondTotal	js/state.js	48;"	p	class:AnonymousClass450aa1dd0101.serveStats.B1
+secondTotal	js/state.js	49;"	p	class:AnonymousClass450aa1dd0101.serveStats.B2
+secondTotal	js/ui.js	418;"	p	class:state.serveStats.A1
+secondTotal	js/ui.js	419;"	p	class:state.serveStats.A2
+secondTotal	js/ui.js	420;"	p	class:state.serveStats.B1
+secondTotal	js/ui.js	421;"	p	class:state.serveStats.B2
+selectHand	js/app.js	150;"	f
+selectPlayer	js/ui.js	367;"	f
+selectedPlayer	js/state.js	27;"	p	class:AnonymousClass450aa1dd0101
+serveFault	js/serve.js	139;"	f
+serveIndex	js/state.js	31;"	p	class:AnonymousClass450aa1dd0101
+serveOrder	js/state.js	35;"	p	class:AnonymousClass450aa1dd0101
+serveStats	js/state.js	45;"	c	class:AnonymousClass450aa1dd0101
+serveStats	js/ui.js	417;"	c	class:state
+serveTurnCount	js/state.js	36;"	p	class:AnonymousClass450aa1dd0101
+serverRotation	js/state.js	30;"	p	class:AnonymousClass450aa1dd0101
+service	js/state.js	29;"	p	class:AnonymousClass450aa1dd0101
+settings	js/state.js	15;"	p	class:AnonymousClass450aa1dd0101
+setup	index.html	26;"	I
+short_name	manifest.json	3;"	s
+shotButtons	index.html	93;"	I
+shotStatistics	js/history.js	137;"	f
+shotStats	js/history.js	25;"	c	class:state
+shotStats	js/state.js	63;"	p	class:AnonymousClass450aa1dd0101
+shotStatsArea	index.html	116;"	I
+shotStatsConfig	js/state.js	83;"	c
+shots	js/history.js	219;"	p	class:shotArray.sort
+shots	js/history.js	26;"	p	class:state.shotStats
+shots	js/history.js	33;"	c	class:state.shotStats
+shots	js/history.js	41;"	c	class:state.shotStats
+showAllShots	js/state.js	72;"	p	class:AnonymousClass450aa1dd0101.ui
+showHandChoice	js/ui.js	283;"	f
+showTopN	js/state.js	84;"	p	class:shotStatsConfig
+singleA	js/state.js	12;"	p	class:AnonymousClass450aa1dd0101
+singleB	js/state.js	13;"	p	class:AnonymousClass450aa1dd0101
+sizes	manifest.json	12;"	s	object:icons.0
+sizes	manifest.json	17;"	s	object:icons.1
+sort	js/history.js	216;"	c	class:shotArray
+src	manifest.json	11;"	s	object:icons.0
+src	manifest.json	16;"	s	object:icons.1
+startMatch	js/app.js	20;"	f
+start_url	manifest.json	4;"	s
+statsArea	index.html	110;"	I
+team	js/history.js	222;"	p	class:shotArray.sort
+theme_color	manifest.json	7;"	s
+toggleHistory	js/history.js	68;"	f
+toggleShotStats	js/history.js	408;"	f
+toggleStats	js/history.js	121;"	f
+type	js/app.js	141;"	p	class:state.pendingShot
+type	manifest.json	13;"	s	object:icons.0
+type	manifest.json	18;"	s	object:icons.1
+ui	js/state.js	69;"	c	class:AnonymousClass450aa1dd0101
+undo	js/history.js	459;"	f
+undoBtn	index.html	88;"	I
+updateCurrentGameHighlight	js/ui.js	108;"	f
+updatePairLabel	js/ui.js	349;"	f
+updatePlayerButtons	js/ui.js	471;"	f
+updatePoints	js/ui.js	57;"	f
+updateServeButton	js/ui.js	334;"	f
+updateServeOrder	js/serve.js	90;"	f
+updateServerMark	js/ui.js	91;"	f
+updateShotAreaColor	js/ui.js	386;"	f
+updateShotStats	js/history.js	394;"	f
+updateUI	js/ui.js	483;"	f
+updateUndoButton	js/ui.js	460;"	f
+urlsToCache	service-worker.js	3;"	C
+win	js/history.js	171;"	p	class:headerRow.appendChild.appendChild.appendChild.A
+win	js/history.js	172;"	p	class:headerRow.appendChild.appendChild.appendChild.B
+win	js/history.js	220;"	p	class:shotArray.sort
+win	js/history.js	33;"	p	class:state.shotStats.shots
+win	js/history.js	41;"	p	class:state.shotStats.shots
+winGame	js/app.js	382;"	f
+味方	index.html	28;"	j
+対戦相手	index.html	32;"	j

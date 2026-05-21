@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ST-Insight</title>
+		
+		<meta name="apple-mobile-web-app-title" content="ST-Insight">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" href="icon-192.png">
+		
+		<link rel="stylesheet" href="style.css">
+		<link rel="manifest" href="manifest.json">
+		<meta name="theme-color" content="#4CAF50">
+		
+	</head>
+
+	<body>
+
+<!--		<h2>SoftTennisInsight</h2>	タイトル無いほうが表示数増えるためコメントアウト-->
+
+		<!-- 試合設定 -->
+		<div id="setup">
+
+			<h3>味方</h3>
+			<input id="A1" placeholder="後衛">
+			<input id="A2" placeholder="前衛">
+
+			<h3>対戦相手</h3>
+			<input id="B1" placeholder="後衛">
+			<input id="B2" placeholder="前衛">
+
+			<br><br>
+
+			ゲーム数
+
+			<label><input type="radio" name="games" value="3">3</label>
+			<label><input type="radio" name="games" value="5" checked>5</label>
+			<label><input type="radio" name="games" value="7">7</label>
+			<label><input type="radio" name="games" value="9">9</label>
+
+			<br><br>
+
+			サービス権
+
+			<label><input type="radio" name="serve" value="A" checked>味方</label>
+			<label><input type="radio" name="serve" value="B">対戦相手</label>
+
+			<br><br>
+
+			<button onclick="startMatch()">試合開始</button>
+
+		</div>
+		
+		<!-- バージョン情報 -->
+		<div id="appInfo"></div>
+		
+		<!-- 試合開始後画面 -->
+		<div id="match" class="hidden">
+
+			<!-- スコアボード上の名前表示
+			<h3 id="pairLabel"></h3>
+			-->
+
+			<table class="scoreboard" id="scoreboard">
+				<colgroup>
+				<col style="width:150px;">	<!-- CSSと合わせる -->
+				<col>
+				<col>
+				<col>
+				<col>
+				<col style="width:68px;">
+				</colgroup>
+			</table>
+			<br>
+
+			<!-- 選手ボタン -->
+			<div class="player-area">
+				<div class="player-group">
+					<div id="players">
+						<button class="playerBtn" id="btnA1"></button>
+						<button class="playerBtn" id="btnA2"></button>
+						<button class="playerBtn" id="btnB1"></button>
+						<button class="playerBtn" id="btnB2"></button>
+					</div>
+				</div>
+				<!-- 戻すボタン -->
+				<button id="undoBtn">↩ 戻す</button>
+			</div>
+			<br>
+
+			<!-- ショットボタン -->
+			<div class="shot-grid" id="shotButtons"></div>
+
+			<!-- 次の試合ボタン -->
+			<div style="text-align:center;margin-top:20px;">
+				<button id="nextMatchBtn" class="hidden" onclick="nextMatch()">次の試合</button>
+			</div>
+			
+			<div class="stats-row">
+				<div class="stats-block history">
+					<!-- 得点履歴 -->
+					<button class="stat-btn" onclick="toggleHistory()">得点履歴</button>
+					<div id="historyArea" class="stat-area"></div> <!-- class="hidden"></div> -->
+				</div>
+				
+				<div class="stats-block serve">
+					<!-- サーブ確率 -->
+					<button class="stat-btn" onclick="toggleStats()">サーブ確率</button>
+					<div id="statsArea" class="stat-area"></div> <!-- class="hidden"></div> -->
+				</div>
+					
+				<div class="stats-block shot">
+					<!-- ショット集計 -->
+					<button class="stat-btn" onclick="toggleShotStats()">ショット集計</button>
+					<div id="shotStatsArea" class="stat-area"></div> <!-- class="hidden"></div> -->
+				</div>
+			</div>
+		</div>
+
+		<script src="js/state.js" defer></script>
+		<script src="js/serve.js" defer></script>
+		<script src="js/history.js" defer></script>
+		<script src="js/ui.js" defer></script>
+		<script src="js/app.js" defer></script>
+		
+		<script>
+			if("serviceWorker" in navigator){
+				navigator.serviceWorker
+					.register("./service-worker.js")
+					.then(()=>{
+						console.log("SW registered")
+					})
+					.catch(err=>{
+						console.log(err)
+					})
+			}
+		</script>
+	</body>
+</html>
