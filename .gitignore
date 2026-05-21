@@ -1,0 +1,14 @@
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
