@@ -206,8 +206,8 @@ function recordShot(shotName){
 	// Undo用
 	pushState()
 
-	let player = state.selectedPlayer
-	let team=state.selectedPlayer.startsWith("A")?"A":"B"
+	let playerId = state.selectedPlayerId
+	let team=state.selectedPlayerId.startsWith("A")?"A":"B"
 	let server = getCurrentServer()
 	
 	// ===== スコア更新 =====
@@ -255,9 +255,9 @@ function recordError(errorName){
 	// Undo用
 	pushState()
 
-	let scoredTeam=state.selectedPlayer.startsWith("A")?"B":"A"
+	let scoredTeam=state.selectedPlayerId.startsWith("A")?"B":"A"
 	let server = getCurrentServer()
-	let selectedPlayer = state.selectedPlayer
+	let selectedPlayerId = state.selectedPlayerId
 	
 	// ===== スコア更新（内部）=====
 	if(scoredTeam==="A"){
@@ -270,33 +270,30 @@ function recordError(errorName){
 	// フォルト後の失点
 	if(!state.is1stServe){
 		// 選択中の選手がサーバー
-		if(server == selectedPlayer){
+		if(server == selectedPlayerId){
 			// ダブルフォルト以外の失点（ダブルフォルトはserveFault()で加算する）
 			if(!(errorName === "ダブルフォルト")){
-				console.log("2nd miss server: Not WF")
 				state.serveStats[server].secondTotal++
 				state.serveStats[server].secondIn++
 			}
 		// 他の選手のミス
 		}else{
-			console.log("2nd miss other server: Not WF")
 			state.serveStats[server].secondTotal++
 			state.serveStats[server].secondIn++
 		}
 		
 	// フォルト以外の失点(1st入ってる)
 	}else{
-		console.log("miss : Not Fault")
 	    state.serveStats[server].firstTotal++
 	    state.serveStats[server].firstIn++
 	}
 	
 	// ===== レシーブ統計 =====
 	let isServer =
-	(state.selectedPlayer.startsWith("A") && state.service==="A") ||
-	(state.selectedPlayer.startsWith("B") && state.service==="B")
+	(state.selectedPlayerId.startsWith("A") && state.service==="A") ||
+	(state.selectedPlayerId.startsWith("B") && state.service==="B")
 	
-	let player = state.selectedPlayer
+	let player = state.selectedPlayerId
 	let serveStats = state.serveStats[player]
 	let receiveStats = state.receiveStats[player]
 	if(isServer){
@@ -493,6 +490,59 @@ function nextMatch(){
 	document.querySelectorAll(".playerBtn").forEach(b=>{
 		b.disabled=false
 	})
+}
+
+/* =====================================================
+	風向き変更処理
+	・風向きは詳細モードでのみ表示
+	・風向き変更をstateに保存
+	・得点入力のタイミングで履歴に出力するためのフラグをON
+====================================================== */
+function changeWind(btn,wind){
+	// 同じ風なら何もしない
+	if(state.wind === wind) return
+
+	// 状態更新
+	state.wind = wind
+
+	// 風向き未出力フラグON
+	state.pendingWindLog = true
+
+	// active解除
+	document.querySelectorAll(".windBtn").forEach(b=>{
+		b.classList.remove("activeWind")
+	})
+
+	// 押下ボタン強調
+	btn.classList.add("activeWind")
+
+	// 風向きは得点入力のタイミングで履歴に出力する
+	// addHistory("wind", `【風向き：${wind}】`)
+}
+
+// 風向きラベル取得	
+function getWindLabel(wind){
+
+	switch(wind){
+
+		case "追風":
+			return "⬆ 追風"
+
+		case "向風":
+			return "⬇ 向風"
+
+		case "右風":
+			return "➡ 右風"
+
+		case "左風":
+			return "⬅ 左風"
+
+		case "無風":
+			return "◯ 無風"
+
+		default:
+			return wind
+	}
 }
 
 function init(){

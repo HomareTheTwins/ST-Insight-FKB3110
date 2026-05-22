@@ -141,7 +141,6 @@ function highlightWinner(){
 }
 
 function displayForNextGame(){
-console.log("★★★★displayForNextGame",state.matchFinished)
 	if(!state.matchFinished) return
 	
 	/* 選手ボタン無効化 */
@@ -165,8 +164,8 @@ console.log("★★★★displayForNextGame",state.matchFinished)
    ===================================================== */
 function createShotButtons(){
 	// 選択選手がサーバーかどうか
-	let isServer = (state.selectedPlayer.startsWith("A") && state.currentServer.startsWith("A")) ||
-				   (state.selectedPlayer.startsWith("B") && state.currentServer.startsWith("B"))
+	let isServer = (state.selectedPlayerId.startsWith("A") && state.currentServer.startsWith("A")) ||
+				   (state.selectedPlayerId.startsWith("B") && state.currentServer.startsWith("B"))
 
 	let aceName = isServer ? "サービスエース" : "リターンエース"
 
@@ -191,6 +190,7 @@ function createShotButtons(){
 	scoreTitle.innerText="【得点】"
 	scoreTitle.style.fontWeight="bold"
 
+	// 詳細/簡易モード切替ボタン
 	let modeBtn=document.createElement("button")
 	modeBtn.className = "modeToggleBtn"
 	modeBtn.innerText = (state.inputMode === "simple") ? "詳細モードへ" : "簡易モードへ"
@@ -200,7 +200,11 @@ function createShotButtons(){
 
 		localStorage.setItem("inputMode",state.inputMode)
 		
+		// モード切替に伴うボタン更新
 		createShotButtons()
+
+		// 風向きボタンの表示切替
+		updateWindButtons()	
 	}
 
 	scoreHeader.appendChild(scoreTitle)
@@ -222,16 +226,16 @@ function createShotButtons(){
 
 	})
 
-	/* エラータイトル */
+	/* ミスタイトル */
 	let errorTitle=document.createElement("div")
-	errorTitle.innerText="【エラー】"
+	errorTitle.innerText="【ミス】"
 	errorTitle.style.gridColumn="1 / span 3"
 	errorTitle.style.fontWeight="bold"
 	errorTitle.style.marginTop="6px"
 	errorTitle.style.textAlign="left"
 	grid.appendChild(errorTitle)
 
-	/* エラーボタン生成 */
+	/* ミスボタン生成 */
 	errors.forEach(e=>{
 
 		/* レシーバーの場合フォルトは非表示 */
@@ -261,7 +265,7 @@ function createShotButtons(){
 	updateShotAreaColor()
 }
 
-/* 詳細モード：ベース配列 */
+/* 詳細モードボタン：ベース配列 */
 const detailShotsBase = [
 	{key :"ace",			type:"shot-back"},
 	{name:"ストローク",		type:"shot-back"},
@@ -317,7 +321,7 @@ function createShots(isServer){
 	return shots
 }
 
-/* 詳細モード：ベース配列(ミス) */
+/* 詳細モードボタン：ベース配列(ミス) */
 const detailMissShotsBase = [
 	{key :"fault",			type:"error-fault",isFault:true},
 	{name:"レシーブ",		type:"error-back",receiveOnly:true},
@@ -462,14 +466,14 @@ function updatePairLabel(){
    ・選択ボタンをハイライト
    ・ショットボタン更新
    ===================================================== */
-function selectPlayer(p){
-	state.selectedPlayer=p
+function selectPlayer(playerId){
+	state.selectedPlayerId=playerId
 
 	document.querySelectorAll(".playerBtn").forEach(b=>{
 		b.classList.remove("selected")
 	})
 
-	document.getElementById("btn"+p).classList.add("selected")
+	document.getElementById("btn"+playerId).classList.add("selected")
 
 	updateShotAreaColor()
 
@@ -486,7 +490,7 @@ function updateShotAreaColor(){
 
 	grid.classList.remove("teamAActive","teamBActive")
 
-	if(state.selectedPlayer.startsWith("A")){
+	if(state.selectedPlayerId.startsWith("A")){
 		grid.classList.add("teamAActive")
 	}else{
 		grid.classList.add("teamBActive")
@@ -506,7 +510,7 @@ function initMatchState(){
 	}
 
 	state.gameResults = []
-	state.selectedPlayer = "A1"
+	state.selectedPlayerId = "A1"
 	state.history = []
 	state.historyStack = []
 
@@ -576,6 +580,20 @@ function updatePlayerButtons(){
 }
 
 /* =====================================================
+   風向きボタン表示変更
+   ・簡易モードでは非表示
+   ===================================================== */
+function updateWindButtons(){
+	const windArea = document.getElementById("windArea")
+
+	if(state.inputMode === "simple"){
+		windArea.classList.add("hidden")
+	}else{
+		windArea.classList.remove("hidden")
+	}
+}
+
+/* =====================================================
    UI全更新
    ===================================================== */
 function updateUI(){
@@ -594,5 +612,6 @@ function updateUI(){
 	updatePlayerButtons()
 	createShotButtons()
 	updateUndoButton()
+	updateWindButtons()		
 }
 

@@ -4,10 +4,10 @@
  無断転載・再配布禁止
 */
 
-<!-- 状態管理 -->
+/* 状態管理 */
 let state={
 
-	players:{},
+	players:{},				// 選手情報 { A1: "選手名", A2: "選手名", B1: "選手名", B2: "選手名" }
 	isSingles:false,		// シングルスかどうか
 	singleA:"",				// シングルスの選手A（A1 or A2）
 	singleB:"",				// シングルスの選手B（B1 or B2）
@@ -24,7 +24,7 @@ let state={
 	
 	gameResults: [],		// 各ゲームの勝者 ["A","B","A"...]
 
-	selectedPlayer:"A1",	// 選択中の選手
+	selectedPlayerId:"A1",	// 選択中の選手ID（例: A1/A2/B1/B2）
 	
 	service:"A",			// サービス権のあるペア（A or B）
 	serverRotation: [],		// サービス順
@@ -79,7 +79,11 @@ let state={
 	matchFinished:false,
 	
 	/* 入力モード */
-	inputMode : localStorage.getItem("inputMode") || "detail"	/* detail：詳細モード / simple : 簡易モード */
+	inputMode : localStorage.getItem("inputMode") || "detail",	/* detail：詳細モード / simple : 簡易モード */
+
+	/* 風の状態 */
+	wind: "無風",			// 追風、向風、右風、左風、無風
+	pendingWindLog: false	// 風の変更ログが保留中かどうか（true:保留中 / false:保留なし）		
 }
 
 // ショット分析設定
