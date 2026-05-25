@@ -440,16 +440,18 @@ outline:1px solid #000;
 	background: #ffe0b2;
 }
 
+#historyArea{
+	display:flex;
+	flex-direction:column;
+	gap:2px;
+}
+
 .history .stat-area {
 	background: #fff3e0;
 }
 
-#historyArea{
-	display:flex;
-
-	flex-direction:column;
-
-	gap:2px;
+.history .stat-area.hidden{
+	display:none !important;
 }
 
 .historyRow{
@@ -480,12 +482,12 @@ outline:1px solid #000;
 
 /* サーブ確率 */
 /* 色統一（ボタン＋中身） */
-.stats .stat-btn {
-	background: #afeeee;
+.serve .stat-btn {
+	background: #b3e5fc;
 }
 
-.stats .stat-area {
-	background: #e0ffff;
+.serve .stat-area {
+	background: #e1f5fe;
 }
 
 /* ショット集計 */
