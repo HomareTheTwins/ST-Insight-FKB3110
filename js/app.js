@@ -8,7 +8,7 @@
 const APP_NAME = "ST-Insight"
 
 // バージョン情報
-const APP_VERSION = "v0.32-Beta"	// service-workerのバージョンと合わせる
+const APP_VERSION = "v0.33-Beta"	// service-workerのバージョンと合わせる
 
 // フォア/バック不要ショット
 const noHandShots = new Set([
@@ -136,6 +136,12 @@ function initPlayers(){
 	selectPlayer(state.service==="A"?"A1":"B1")
 }
 
+/* =====================================================
+	ショット入力処理
+	・ショット名と得点/失点の情報をstate.pendingShotに一時保存
+	・フォア/バック選択UI表示
+	・今後コースや結果の選択も追加する場合はここでstate.pendingShotに情報を追加していく★
+   ===================================================== */
 function handleShotInput(name,type){
 
 	// 対象外 → 即処理
@@ -152,10 +158,13 @@ function handleShotInput(name,type){
 
 	// 一時保存
 	state.pendingShot = {
-		name:name,
-		type:type
+		name:name,		// ショット名
+		type:type,		// 得点 or 失点
+		hand:null,		// フォア/バックは後で選択
+		missType:null	// ミスの種類（凡ミス/攻めミス/押し負け）※失点のみ
 	}
 
+	// フォア/バック選択UI表示
 	showHandChoice()
 }
 
@@ -166,13 +175,18 @@ function selectHand(hand){
 
 	if(!state.pendingShot) return
 
-	// hand情報も解析用のeventDataに追加するため、recordShot/recordErrorにhand情報渡すので以下はコメントアウト
-	// let shotName =
-	// 	state.pendingShot.name + "（" + hand + "）"
-
 	if(state.pendingShot.type==="得点"){
 		recordShot(state.pendingShot.name, hand)
 	}else{
+		state.pendingShot.hand = hand	// ミスのショットにhand情報も追加してからrecordError呼び出す
+
+		// 詳細モードの場合はミスタイプ選択UI表示（ミスタイプ選択後にrecordError呼び出す）
+		if(state.inputMode === "detail"){
+			showMissTypeChoice()	// ミスタイプ選択UI表示（ミスタイプ選択後にrecordError呼び出す）
+			return
+		}
+
+		// 簡易モードの場合はミスタイプ選択なしでrecordError呼び出す
 		recordError(state.pendingShot.name, hand)
 	}
 
@@ -191,14 +205,25 @@ function cancelHand(){
 	createShotButtons()
 }
 
-// UI削除
-function removeHandChoice(){
+/* =====================================================
+	ミスの種類選択処理
+	・recordError呼び出し
+	・選択UI削除
+	===================================================== */
+function selectMissType(missType){
 
-	let overlay = document.getElementById("handOverlay")
+	state.pendingShot.missType = missType
 
-	if(overlay){
-		overlay.remove()
-	}
+	recordError(
+		state.pendingShot.name,
+		state.pendingShot.hand,
+		missType
+	)
+
+	state.pendingShot = null
+
+	removeMissTypeChoice()
+	removeHandChoice()
 }
 
 /* =====================================================
@@ -260,7 +285,7 @@ function recordShot(shotName, hand = null){
 /* =====================================================
    ミスショット処理
    ===================================================== */
-function recordError(errorName, hand = null){
+function recordError(errorName, hand = null, missType = null){
 	// Undo用
 	pushState()
 
@@ -318,7 +343,8 @@ function recordError(errorName, hand = null){
 	addHistory({
 		type: "失点",
 		eventName: errorName,
-		hand: hand
+		hand,					// ミスのショットにhand情報も追加
+		missType				// ミスタイプ（凡ミス/攻めミス/押し負け）も追加
 	})
 
 	// 1ゲーム終了確認
@@ -510,6 +536,7 @@ function nextMatch(){
 	/* 画面戻す */
 	document.getElementById("match").classList.add("hidden")
 	document.getElementById("setup").classList.remove("hidden")
+	document.getElementById("appInfo").classList.remove("hidden")
 
 	/* ボタン戻す */
 	document.getElementById("nextMatchBtn").classList.add("hidden")

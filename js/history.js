@@ -21,7 +21,9 @@ function addHistory(eventData) {
 		course = null,		// コース管理用（例: ストレート/クロス/逆クロス/センター）★統計管理用
 
 		missType = null,	// ミスの種類管理用（例: 凡ミス/攻めミス/押された）★統計管理用
-		missResult = null	// ミスの結果管理用（例: ネット/アウト/サイドアウト）★統計管理用
+		missResult = null,	// ミスの結果管理用（例: ネット/アウト/サイドアウト）★統計管理用
+
+		// wind = null			// 風向きはstateから直接取得するので不要
 	} = eventData
 
 	// system表示用
@@ -138,6 +140,11 @@ function renderHistory() {
 		// hand情報がある場合は表示用イベントラベルにhand情報を追加（例: ストローク → ストローク（フォア））
 		if (h.hand) {
 			displayEventLabel += `（${h.hand}）`
+		}
+
+		// ミスタイプがある場合は表示用イベントラベルにミスタイプ情報を追加（例: ストローク（フォア） → ストローク（フォア）[凡ミス]）
+		if(h.missType){
+			displayEventLabel += `[${h.missType}]`
 		}
 
 		// 履歴行のHTMLを返す（例: 田中：得点-ストローク（フォア）【追風】）

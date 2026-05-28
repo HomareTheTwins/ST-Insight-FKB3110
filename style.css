@@ -300,32 +300,38 @@ outline:1px solid #000;
 	background: #fff3a0;
 }
 
-/* フォア/バックオーバーレイ */
-#handOverlay {
-	position: absolute;
+/* popup背景共通 */
+.popup-overlay{
+	position: fixed;
+
 	inset: 0;
 
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
-	background: rgba(0, 0, 0, 0.s5);
+	background: rgba(0,0,0,0.35);
 
 	z-index: 100;
 }
 
 /* popup共通 */
 .hand-popup {
-	padding: 20px;
+
+	padding: 16px;
+
 	border-radius: 12px;
 
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	box-shadow:
+		0 6px 18px rgba(0,0,0,0.22);
 
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
 
-	min-width: 180px;
+	gap: 8px;
+
+	width: 85%;
+	max-width: 220px;
 
 	animation: popupIn 0.15s ease;
 }
@@ -366,6 +372,113 @@ outline:1px solid #000;
 		transform: scale(1);
 		opacity: 1;
 	}
+}
+
+/* popupボタン共通 */
+.popup-btn{
+
+	border:none;
+
+	border-radius:999px;
+
+	padding:8px 14px;
+
+	font-size:14px;
+	font-weight:600;
+
+	color:#37474f;
+
+	background:
+		linear-gradient(
+			to bottom,
+			#f7f7f7,
+			#e5e5e5
+		);
+
+	cursor:pointer;
+
+	box-shadow:
+		0 1px 3px rgba(0,0,0,0.10),
+		inset 0 1px 0 rgba(255,255,255,0.45);
+
+	transition:
+		transform 0.08s ease,
+		box-shadow 0.12s ease,
+		filter 0.12s ease;
+}
+
+.popup-btn:hover{
+
+	filter:brightness(1.05);
+
+	box-shadow:
+		0 5px 10px rgba(0,0,0,0.22),
+		inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.popup-btn:active{
+
+	transform:translateY(1px);
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.10),
+		inset 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* フォア/バック選択ボタン */
+.btn-fore{
+	background:
+		linear-gradient(
+			to bottom,
+			#bbdefb,
+			#90caf9
+		);
+}
+
+.btn-back{
+	background:
+		linear-gradient(
+			to bottom,
+			#d1c4e9,
+			#b39ddb
+		);
+}
+
+.btn-cancel{
+	background:
+		linear-gradient(
+			to bottom,
+			#bdbdbd,
+			#9e9e9e
+		);
+}
+
+/* ミスの種類選択ボタン */
+.btn-unforced{
+	background:
+		linear-gradient(
+			to bottom,
+			#ffcdd2,
+			#ef9a9a
+		);
+}
+
+.btn-attack{
+	background:
+		linear-gradient(
+			to bottom,
+			#ffe0b2,
+			#ffcc80
+		);
+}
+
+.btn-pressured{
+	background:
+		linear-gradient(
+			to bottom,
+			#b3e5fc,
+			#81d4fa
+		);
 }
 
 /* 詳細/簡易モード切替 */

@@ -396,10 +396,11 @@ function showHandChoice(){
 
 	removeHandChoice()
 
-	let grid = document.getElementById("shotButtons")
+	//let grid = document.getElementById("shotButtons")
 
 	let overlay = document.createElement("div")
 	overlay.id = "handOverlay"
+	overlay.className = "popup-overlay"
 
 	let shotName = state.pendingShot?.name || ""
 
@@ -416,18 +417,18 @@ function showHandChoice(){
 				${shotName}
 			</div>
 
-			<div class="hand-subtitle">
+<!--			<div class="hand-subtitle">
 				フォア / バック
 			</div>
-
-			<button id="btnFore">フォア</button>
-			<button id="btnBack">バック</button>
-			<button id="btnCancel">取消</button>
+-->
+			<button class="popup-btn btn-fore" id="btnFore">フォア</button>
+			<button class="popup-btn btn-back" id="btnBack">バック</button>
+			<button class="popup-btn btn-cancel" id="btnCancel">取消</button>
 
 		</div>
 	`
 
-	grid.appendChild(overlay)
+	document.body.appendChild(overlay)
 
 	document.getElementById("btnFore").onclick =
 		()=>selectHand("フォア")
@@ -437,6 +438,80 @@ function showHandChoice(){
 
 	document.getElementById("btnCancel").onclick =
 		()=>cancelHand()
+}
+
+/* =====================================================
+   フォア/バック選択UI削除
+   ===================================================== */
+function removeHandChoice(){
+
+	let overlay = document.getElementById("handOverlay")
+
+	if(overlay){
+		overlay.remove()
+	}
+}
+
+/* =====================================================
+	ミスの種類表示ポップアップ
+	===================================================== */
+function showMissTypeChoice(){
+
+	const overlay = document.createElement("div")
+
+	overlay.id = "missTypeChoiceOverlay"
+
+	overlay.className = "popup-overlay"
+
+	overlay.innerHTML = `
+		<div class="hand-popup error-popup">
+
+			<div class="hand-title">
+				ミス分類
+			</div>
+
+<!--			<div class="hand-subtitle">
+				ミス内容を選択
+			</div>
+-->
+			<button class="popup-btn btn-unforced" onclick="selectMissType('凡ミス')">
+				凡ミス
+			</button>
+
+			<button class="popup-btn btn-attack" onclick="selectMissType('攻めミス')">
+				攻めミス
+			</button>
+
+			<button class="popup-btn btn-pressured" onclick="selectMissType('押し負け')">
+				押し負け
+			</button>
+
+			<button class="popup-btn btn-cancel" id="btnMissCancel">
+				取消
+			</button>
+
+		</div>
+	`
+
+	document.body.appendChild(overlay)
+
+	document.getElementById("btnMissCancel").onclick = () => {
+		removeMissTypeChoice()
+		//removeHandChoice()
+	}
+}
+
+/* =====================================================
+	ミスの種類選択ポップアップ削除
+	===================================================== */
+function removeMissTypeChoice(){
+
+	const popup =
+		document.getElementById("missTypeChoiceOverlay")
+
+	if(popup){
+		popup.remove()
+	}
 }
 
 /* =====================================================
