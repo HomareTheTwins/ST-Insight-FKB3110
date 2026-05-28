@@ -82,7 +82,7 @@ let state={
 	inputMode : localStorage.getItem("inputMode") || "detail",	/* detail：詳細モード / simple : 簡易モード */
 
 	/* 風の状態 */
-	wind: "無風",			// 追風、向風、右風、左風、無風
+	wind: "無風",			// 追風、向風、右風、左風、無風	※風向きはundo/redoの対象外（画面上部に現在の風向き表示されているため
 	pendingWindLog: false	// 風の変更ログが保留中かどうか（true:保留中 / false:保留なし）		
 }
 

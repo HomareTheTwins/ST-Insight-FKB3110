@@ -152,7 +152,11 @@ function serveFault() {
 			state.score.pointB++
 		}
 		
-		addHistory("失点", "ダブルフォルト")
+		addHistory({
+			type: "失点",
+			eventName: "ダブルフォルト"
+		})
+
 		state.is1stServe = true
 
 		updatePoints()

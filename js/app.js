@@ -99,7 +99,10 @@ function startMatch(){
 	updateUI()
 	
 	// 得点履歴にゲーム数出力
-	addHistory("system", `1ゲーム目`)
+	addHistory({
+		type: "system",
+		eventName: `1ゲーム目`
+	})
 }
 
 /* =====================================================
@@ -163,13 +166,14 @@ function selectHand(hand){
 
 	if(!state.pendingShot) return
 
-	let shotName =
-		state.pendingShot.name + "（" + hand + "）"
+	// hand情報も解析用のeventDataに追加するため、recordShot/recordErrorにhand情報渡すので以下はコメントアウト
+	// let shotName =
+	// 	state.pendingShot.name + "（" + hand + "）"
 
 	if(state.pendingShot.type==="得点"){
-		recordShot(shotName)
+		recordShot(state.pendingShot.name, hand)
 	}else{
-		recordError(shotName)
+		recordError(state.pendingShot.name, hand)
 	}
 
 	state.pendingShot = null
@@ -201,8 +205,9 @@ function removeHandChoice(){
    得点入力処理
    ・選択選手のチームにポイント加算
    ・スコア更新とゲーム判定
+   ・サービス権の更新
    ===================================================== */
-function recordShot(shotName){
+function recordShot(shotName, hand = null){
 	// Undo用
 	pushState()
 
@@ -217,7 +222,11 @@ function recordShot(shotName){
 	updateServeButton()	// フォルトボタン更新
 
 	// 得点履歴追加
-	addHistory("得点", shotName)
+	addHistory({
+		type: "得点",
+		eventName: shotName,
+		hand: hand
+	})
 	
 	// サーブのカウントアップ
 	if(state.is1stServe){
@@ -251,7 +260,7 @@ function recordShot(shotName){
 /* =====================================================
    ミスショット処理
    ===================================================== */
-function recordError(errorName){
+function recordError(errorName, hand = null){
 	// Undo用
 	pushState()
 
@@ -306,7 +315,11 @@ function recordError(errorName){
 	updatePoints()
 	
 	// 履歴追加
-	addHistory("失点", errorName)
+	addHistory({
+		type: "失点",
+		eventName: errorName,
+		hand: hand
+	})
 
 	// 1ゲーム終了確認
 	checkGame()
@@ -332,6 +345,7 @@ function recordError(errorName){
    ゲーム取得判定
    ・通常ゲーム
    ・ファイナルゲーム(7ポイント)
+   ・得点履歴にゲーム数出力
    ===================================================== */
 function checkGame(){
 	if(state.isFinalGame){
@@ -374,10 +388,10 @@ function checkGame(){
 
 	// ゲーム数を得点履歴に表示
 	if(state.gameFinished && !state.matchFinished && !state.isFinalGame){
-		addHistory(
-			"system",
-			`${state.score.currentGame}ゲーム目`
-		)
+		addHistory({
+			type: "system",
+			eventName: `${state.score.currentGame}ゲーム目`
+		})
 	}
 
 	if(!state.matchFinished){
@@ -419,7 +433,10 @@ function winGame(team){
 
 	// ファイナルゲーム時、得点履歴にその旨表示
 	if(state.isFinalGame){
-		addHistory("system","ファイナルゲーム")
+		addHistory({
+			type: "system",
+			eventName: "ファイナルゲーム"
+		})
 	}
 
 	// 1ゲーム終了のため初期化
@@ -455,11 +472,22 @@ function checkGameSet(){
 	}
 }
 
+/* =====================================================
+	試合終了処理
+
+	・試合終了フラグをON
+	・スコアボードの現在ゲーム列を黄色でハイライト
+	・現在ゲームのハイライトを解除
+	・「試合終了」アラート表示
+	・得点入力ボタンを無効化
+	・「次の試合」ボタンを表示
+===================================================== */
 function finishMatch(winner){
 
 	state.matchFinished = true;
 	
 	renderScoreboard()
+	renderServeStats()
 	updateCurrentGameHighlight()
 	highlightWinner();
 	
@@ -517,7 +545,10 @@ function changeWind(btn,wind){
 	btn.classList.add("activeWind")
 
 	// 風向きは得点入力のタイミングで履歴に出力する
-	// addHistory("wind", `【風向き：${wind}】`)
+	// addHistory({
+	// 	type: "wind",
+	// 	eventName: `【風向き：${wind}】`
+	// })
 }
 
 // 風向きラベル取得	

@@ -56,8 +56,16 @@ function createScoreboard(){
    ===================================================== */
 function updatePoints(){
 	let g=state.score.currentGame
-	document.getElementById("g"+g+"A").innerText=state.score.pointA
-	document.getElementById("g"+g+"B").innerText=state.score.pointB
+
+	// 安全対策
+	const pointAElmnt = document.getElementById("g"+g+"A")
+	const pointBElmnt = document.getElementById("g"+g+"B")
+
+	// ★ポイントセルが存在しない場合は更新処理をスキップ（例: ゲーム数以上のポイント更新など）
+	if(!pointAElmnt || !pointBElmnt) return
+
+	pointAElmnt.innerText=state.score.pointA
+	pointBElmnt.innerText=state.score.pointB
 	
 	renderScoreboard()
 }

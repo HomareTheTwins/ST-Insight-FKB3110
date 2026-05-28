@@ -5,9 +5,25 @@
 */
 
 /* =====================================================
-   得点履歴登録
+   得点履歴登録&イベントログ保存
+   ・得点/失点の内容と選手名を履歴に保存
+   ・ショット統計用の情報も保存（hand/course/missType/missResult）
    ===================================================== */
-function addHistory(type, name, player = null) {
+// function addHistory(type, name, player = null) {
+function addHistory(eventData) {
+	// eventDataから必要な情報を分割代入で取得（objectで受け取る形に変更）
+	const {
+		type,				// 履歴タイプ（例: 得点/失点/system）
+		eventName,			// 履歴内容（例: サーブ/フォアハンド/ゲーム開始）
+		player = null,		// 選手ID（例: A1/A2/B1/B2）★統計管理用
+
+		hand = null,		// フォア/バック管理用（例: fore/back）★統計管理用
+		course = null,		// コース管理用（例: ストレート/クロス/逆クロス/センター）★統計管理用
+
+		missType = null,	// ミスの種類管理用（例: 凡ミス/攻めミス/押された）★統計管理用
+		missResult = null	// ミスの結果管理用（例: ネット/アウト/サイドアウト）★統計管理用
+	} = eventData
+
 	// system表示用
 	let playerName = ""
 
@@ -19,11 +35,19 @@ function addHistory(type, name, player = null) {
 
 	// 履歴追加
 	state.history.push({
-		type: type,
-		name: name,
-		player: playerName,
-		wind: state.wind,	// 風の状態を履歴に追加
-		time: Date.now()
+		type,				// 履歴タイプ（例: 得点/失点/system）
+		eventName,			// 履歴内容（例: サーブ/フォアハンド/ゲーム開始）
+		player: playerName,	// 履歴表示用の選手名（例: 田中）
+
+		hand,				// フォア/バック管理用（例: fore/back）★統計管理用
+		course,				// コース管理用（例: ストレート/クロス/逆クロス/センター）★統計管理用
+
+		missType,			// ミスの種類管理用（例: 凡ミス/攻めミス/押された）★統計管理用
+		missResult,			// ミスの結果管理用（例: ネット/アウト/サイドアウト）★統計管理用
+		
+		wind: state.wind,	// 風向きも履歴に保存
+
+		time: Date.now()	// タイムスタンプ（必要に応じて） ★履歴の時間管理に活用できるかも
 	})
 
 	/* =========================
@@ -38,11 +62,13 @@ function addHistory(type, name, player = null) {
 	}
 
 	/* =========================
-	   ショット統計
+	   ショット統計　更新
+	   1. ショット名の作成（例: ストローク（フォア））★hand情報も含める形に変更
+	   2. 得点/失点でショット統計を更新
+	   3. 表示中なら再描画
 	   ========================= */
 	// 初期化
 	const playerId = state.selectedPlayerId	// ★選手IDを状態から取得（例: A1/A2/B1/B2）
-	// playerNameは履歴表示用、playerIdは統計管理用（例: A1/A2/B1/B2）
 
 	if (!state.shotStats[playerId]) {
 		state.shotStats[playerId] = {
@@ -50,20 +76,25 @@ function addHistory(type, name, player = null) {
 		}
 	}
 
+	// 集計用ショット名作成（例: ストローク（フォア））★hand情報も含める形に変更
+	// ToDo★ 今後もしhand以外の情報も追加する可能性があるため、shotNameは統計管理用の名前として使用（履歴表示にはeventData.nameを使用）
+	// 例: ストローク（フォア）/ ストローク（バック）/ ストローク（フォア/クロス）など
+	const statShotName = hand ? `${eventName}（${hand}）` : eventName
+
 	// 得点
 	if (type === "得点") {
-		if (!state.shotStats[playerId].shots[name]) {
-			state.shotStats[playerId].shots[name] = { win: 0, error: 0 }
+		if (!state.shotStats[playerId].shots[statShotName]) {
+			state.shotStats[playerId].shots[statShotName] = { win: 0, error: 0 }
 		}
-		state.shotStats[playerId].shots[name].win++
+		state.shotStats[playerId].shots[statShotName].win++
 	}
 
 	// 失点
 	if (type === "失点") {
-		if (!state.shotStats[playerId].shots[name]) {
-			state.shotStats[playerId].shots[name] = { win: 0, error: 0 }
+		if (!state.shotStats[playerId].shots[statShotName]) {
+			state.shotStats[playerId].shots[statShotName] = { win: 0, error: 0 }
 		}
-		state.shotStats[playerId].shots[name].error++
+		state.shotStats[playerId].shots[statShotName].error++
 	}
 
 	// 表示中なら再描画
@@ -74,7 +105,9 @@ function addHistory(type, name, player = null) {
 
 /* =====================================================
    得点履歴表示
-   ・type=systemならシステム文言表示
+   ・得点/失点なら選手名＋内容表示
+   ・type=systemならシステム文言表示（例: 各ゲーム/ファイナルゲーム）
+   ・風向きは前回から変わったときのみ表示（得点/失点のみ）
    ===================================================== */
 function renderHistory() {
 
@@ -87,16 +120,34 @@ function renderHistory() {
 		if (h.type === "system") {
 			prevWind = null // 風向きリセット
 
-			return `=== ${h.name} ===`
+			return `=== ${h.eventName} ===`
 		}
 
 		// 通常履歴：選手名＋内容+風向き（風向きは前回から変わったときのみ表示）
+
+		// 風向きラベルの取得（例: 追風 → ⬆ 追風）★getWindLabel関数でラベルを取得する形に変更
 		let windHtml = ""
 		if (state.inputMode === "detail" && h.wind && h.wind !== prevWind) {
 			windHtml = `<span class="windInline"> ${getWindLabel(h.wind)}</span>`
 			prevWind = h.wind
 		}
-		return `<span class="historyRow"><span class="historyMain">${h.player}：${h.type}-${h.name}</span>${windHtml}</span>`
+
+		// 表示用イベントラベルの取得（例: ストローク → ストローク（フォア））
+		let displayEventLabel = h.eventName
+
+		// hand情報がある場合は表示用イベントラベルにhand情報を追加（例: ストローク → ストローク（フォア））
+		if (h.hand) {
+			displayEventLabel += `（${h.hand}）`
+		}
+
+		// 履歴行のHTMLを返す（例: 田中：得点-ストローク（フォア）【追風】）
+		return `<span class="historyRow">
+					<span class="historyMain">
+						${h.player}：${h.type}-${displayEventLabel}
+					</span>
+						${windHtml}
+					</span>
+				`
 	}).join("")
 }
 
@@ -528,9 +579,9 @@ function undo() {
 	state.currentServer = prev.currentServer
 	state.serveTurnCount = prev.serveTurnCount
 
-	state.isFinalGame = prev.isFinalGame,
-		state.gameFinished = prev.gameFinished,
-		state.matchFinished = prev.matchFinished
+	state.isFinalGame = prev.isFinalGame
+	state.gameFinished = prev.gameFinished
+	state.matchFinished = prev.matchFinished
 
 	state.ui = prev.ui
 
