@@ -4,11 +4,22 @@ body {
 	text-align: center;
 }
 
-button {
-	padding: 8px;
-	margin: 3px;
-	font-size: 13px;
-	min-width: 70px;
+button{
+	padding:8px;
+	margin:3px;
+	font-size:13px;
+	min-width:70px;
+
+	border:none;
+	border-radius:6px;
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.08);
+
+	transition:
+		background .15s ease,
+		transform .05s ease,
+		box-shadow .15s ease;
 }
 
 /* バージョン情報 */
@@ -41,14 +52,16 @@ button {
 }
 
 .playerBtn {
-	/* background:#ddd; */
 	flex: 0 0 auto;
-	/* 知事目内 */
-	border: 1px solid #666;
+	border: none;
+	border-radius: 6px;
 	padding: 6px;
+	/* 漢字3文字想定 */
 	font-size: 12px;
 	min-width: 60px;
-	/* 漢字3文字想定 */
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.08);
 }
 
 .teamA {
@@ -59,18 +72,13 @@ button {
 	background: #ffcc80;
 }
 
-/* 
-.selected{
-outline:1px solid #000;
-} */
-
 .playerBtn.selected.teamA {
-	border: 3px solid #4CAF50;
+	outline:2px solid #4CAF50;
 	/* teamAActive と同じ */
 }
 
 .playerBtn.selected.teamB {
-	border: 3px solid #ff9800;
+	outline:2px solid #ff9800;
 	/* teamBActive と同じ色 */
 }
 
@@ -85,7 +93,7 @@ outline:1px solid #000;
 
 	background: #ffeaea;
 	border: 1px solid #f5bcbc;
-	border-radius: 10px;
+	border-radius: 6px;
 
 	cursor: pointer;
 	transition: 0.2s;
@@ -99,7 +107,7 @@ outline:1px solid #000;
 
 /* スマホ対応 */
 #undoBtn:active {
-	transform: scale(0.95);
+	transform:translateY(1px);
 }
 
 #undoBtn:disabled {
@@ -320,10 +328,10 @@ outline:1px solid #000;
 
 	padding: 16px;
 
-	border-radius: 12px;
+	border-radius: 10px;
 
 	box-shadow:
-		0 6px 18px rgba(0,0,0,0.22);
+		0 3px 10px rgba(0,0,0,0.16);
 
 	display: flex;
 	flex-direction: column;
@@ -376,121 +384,96 @@ outline:1px solid #000;
 
 /* popupボタン共通 */
 .popup-btn{
-
 	border:none;
-
-	border-radius:999px;
+	border-radius:6px;
 
 	padding:8px 14px;
 
 	font-size:14px;
 	font-weight:600;
 
+	background:#eceff1;
 	color:#37474f;
-
-	background:
-		linear-gradient(
-			to bottom,
-			#f7f7f7,
-			#e5e5e5
-		);
 
 	cursor:pointer;
 
+	/* 半フラット */
 	box-shadow:
-		0 1px 3px rgba(0,0,0,0.10),
-		inset 0 1px 0 rgba(255,255,255,0.45);
+		0 1px 2px rgba(0,0,0,0.10);
 
 	transition:
-		transform 0.08s ease,
-		box-shadow 0.12s ease,
-		filter 0.12s ease;
+		background .15s ease,
+		box-shadow .15s ease,
+		transform .05s ease;
 }
 
 .popup-btn:hover{
-
-	filter:brightness(1.05);
+	background:#e3e8eb;
 
 	box-shadow:
-		0 5px 10px rgba(0,0,0,0.22),
-		inset 0 1px 0 rgba(255,255,255,0.3);
+		0 2px 4px rgba(0,0,0,0.12);
 }
 
 .popup-btn:active{
+	background:#d9e0e4;
 
 	transform:translateY(1px);
 
 	box-shadow:
-		0 1px 2px rgba(0,0,0,0.10),
-		inset 0 1px 2px rgba(0,0,0,0.08);
+		0 1px 1px rgba(0,0,0,0.08);
 }
 
 /* フォア/バック選択ボタン */
 .btn-fore{
-	background:
-		linear-gradient(
-			to bottom,
-			#bbdefb,
-			#90caf9
-		);
+	background:#f5f5f5;
+	color:#333;
+	border:1px solid #d0d0d0;
 }
 
 .btn-back{
-	background:
-		linear-gradient(
-			to bottom,
-			#d1c4e9,
-			#b39ddb
-		);
+	background:#757575;
+	color:white;
+	border:1px solid #555;
 }
 
 .btn-cancel{
-	background:
-		linear-gradient(
-			to bottom,
-			#bdbdbd,
-			#9e9e9e
-		);
+	background:#dfe6ea;
+	color:#455a64;
 }
 
 /* ミスの種類選択ボタン */
 .btn-unforced{
-	background:
-		linear-gradient(
-			to bottom,
-			#ffcdd2,
-			#ef9a9a
-		);
+	background:#ffcdd2;
 }
 
 .btn-attack{
-	background:
-		linear-gradient(
-			to bottom,
-			#ffe0b2,
-			#ffcc80
-		);
+	background:#ffe0b2;
 }
 
 .btn-pressured{
-	background:
-		linear-gradient(
-			to bottom,
-			#b3e5fc,
-			#81d4fa
-		);
+	background:#b3e5fc;
 }
 
 /* 詳細/簡易モード切替 */
-.modeToggleBtn {
-	font-size: 11px;
-	padding: 4px 10px;
+.modeToggleBtn{
+	font-size:11px;
+	padding:4px 10px;
 
-	border-radius: 999px;
+	border:none;
+	border-radius:999px;
 
-	background: #f0f0f0;
-	border: 1px solid #ccc;
-	/*flex-shrink: 0;*/
+	background:#eceff1;
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.08);
+
+	transition:
+		background .15s ease,
+		transform .05s ease;
+}
+
+.modeToggleBtn:active{
+	transform:translateY(1px);
 }
 
 /* どちらのペアが選択されているか */
@@ -532,19 +515,38 @@ outline:1px solid #000;
 }
 
 /* ボタン */
-.stat-btn {
-	width: 100%;
-	padding: 8px;
-	border: none;
-	border-radius: 6px;
-	font-weight: bold;
+.stat-btn{
+	width:100%;
+
+	padding:10px 12px;
+
+	border:none;
+	border-radius:6px;
+
+	font-weight:600;
+	font-size:14px;
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.08);
+
+	transition:
+		background .15s ease,
+		transform .05s ease,
+		box-shadow .15s ease;
+}
+
+.stat-btn:active{
+	transform:translateY(1px);
+
+	box-shadow:
+		0 1px 1px rgba(0,0,0,0.06);
 }
 
 /* 表示エリア */
 .stat-area {
 	margin-top: 6px;
 	padding: 8px;
-	border-radius: 8px;
+	border-radius: 10px;
 }
 
 /* 得点履歴 */
@@ -581,16 +583,19 @@ outline:1px solid #000;
 	flex:1;
 }
 
+/* 風向き表示 */
 .windInline{
-	font-size:11px;
-
-	color:#6bc2fc;
+	font-size:12px;
 
 	font-weight:bold;
 
-	white-space:nowrap;
+	color:#4aaee8;
 
 	margin-left:8px;
+
+	display:inline-flex;
+	align-items:center;
+	gap:2px;
 }
 
 /* サーブ確率 */
@@ -606,7 +611,7 @@ outline:1px solid #000;
 /* ショット集計 */
 /* 色統一（ボタン＋中身） */
 .shot .stat-btn {
-	background: #c8e6c9;
+	background: #d8f3dc;
 }
 
 .shot .stat-area {
@@ -634,21 +639,35 @@ outline:1px solid #000;
 	font-size: 16px;
 }
 
-.shot-toggle-btn {
-	padding: 6px 10px;
-	font-size: 12px;
+.shot-toggle-btn{
+	padding:6px 10px;
 
-	border-radius: 8px;
-	border: 1px solid #ccc;
+	font-size:12px;
 
-	background: #fff;
-	cursor: pointer;
+	border:none;
+	border-radius:6px;
+
+	background:#eceff1;
+
+	color:#455a64;
+
+	box-shadow:
+		0 1px 2px rgba(0,0,0,0.08);
+
+	cursor:pointer;
+
+	transition:
+		background .15s ease,
+		transform .05s ease;
 }
 
-.shot-toggle-btn:hover {
-	background: #f0f0f0;
+.shot-toggle-btn:hover{
+	background:#e3e8eb;
 }
 
+.shot-toggle-btn:active{
+	transform:translateY(1px);
+}
 
 .stats-line .name {
 	text-align: left;
@@ -668,22 +687,32 @@ outline:1px solid #000;
 	margin-top: 6px;
 
 	background: #b5f2b5;
-	border-radius: 8px;
+	border-radius: 6px;
 
 	font-size: 16px; /* for iphone */
 	font-weight: bold;
 	cursor: pointer;
 
 	user-select: none;
+
+	box-shadow:
+	0 1px 2px rgba(0,0,0,0.06);
+
+	transition:
+	background .15s ease,
+	transform .05s ease;
+}
+.toggle-header:active{
+	transform:translateY(1px);
 }
 
 .toggle-header.pair-header {
-	background: #d8e0fa;
-	color: #333;
+	background:#e2d7f5;
+	color:#4b4453;
 }
 
 .toggle-header.pair-header:hover {
-	background: #b6d4fa;
+	background:#d6c8ef;
 }
 
 .toggle-header.teamA {
@@ -714,7 +743,7 @@ outline:1px solid #000;
 	background: #4CAF50;
 	color: white;
 	border: none;
-	border-radius: 8px;
+	border-radius: 6px;
 }
 
 .hidden {

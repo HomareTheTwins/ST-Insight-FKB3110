@@ -127,7 +127,7 @@ function renderHistory() {
 
 		// 通常履歴：選手名＋内容+風向き（風向きは前回から変わったときのみ表示）
 
-		// 風向きラベルの取得（例: 追風 → ⬆ 追風）★getWindLabel関数でラベルを取得する形に変更
+		// 風向きラベルの取得（例: 追風 → ↑追風）★getWindLabel関数でラベルを取得する形に変更
 		let windHtml = ""
 		if (state.inputMode === "detail" && h.wind && h.wind !== prevWind) {
 			windHtml = `<span class="windInline"> ${getWindLabel(h.wind)}</span>`

@@ -8,7 +8,7 @@
 const APP_NAME = "ST-Insight"
 
 // バージョン情報
-const APP_VERSION = "v0.33-Beta"	// service-workerのバージョンと合わせる
+const APP_VERSION = "v0.34-Beta"	// service-workerのバージョンと合わせる
 
 // フォア/バック不要ショット
 const noHandShots = new Set([
@@ -584,19 +584,19 @@ function getWindLabel(wind){
 	switch(wind){
 
 		case "追風":
-			return "⬆ 追風"
+			return "↑追風"
 
 		case "向風":
-			return "⬇ 向風"
+			return "↓向風"
 
 		case "右風":
-			return "➡ 右風"
+			return "→右風"
 
 		case "左風":
-			return "⬅ 左風"
+			return "←左風"
 
 		case "無風":
-			return "◯ 無風"
+			return "◯無風"
 
 		default:
 			return wind
