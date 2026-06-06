@@ -443,19 +443,20 @@ function checkGame(){
 function winGame(team){
 	let g=state.score.currentGame
 	
-	// stateに記録
-	state.gameResults[g] = team
-	
 	// スコア更新
-	if(team==="A"){
-		state.score.gameA++
-	}else{
-		state.score.gameB++
-	}
-	
+	state.gameResults.push({ 
+		aPoints: state.score.pointA,
+		bPoints: state.score.pointB,
+		winner: team
+	})	// 勝者とそのゲームのポイントも記録するように変更
+	const gameA = getGameCount("A")
+	const gameB = getGameCount("B")
+
 	// ファイナルゲーム判定
-	state.isFinalGame = (state.score.gameA == Math.floor(state.settings.games/2) &&
-	state.score.gameB == Math.floor(state.settings.games/2))
+	state.isFinalGame = (
+		gameA == Math.floor(state.settings.games/2) &&
+		gameB == Math.floor(state.settings.games/2)
+	)
 
 	// ファイナルゲーム時、得点履歴にその旨表示
 	if(state.isFinalGame){
@@ -492,10 +493,16 @@ function winGame(team){
 function checkGameSet(){
 	const win=Math.floor(state.settings.games/2)+1
 
-	if(state.score.gameA>=win || state.score.gameB>=win){
-		const winner = state.score.gameA >= win ? "A" : "B"
+	const gameA = getGameCount("A")
+	const gameB = getGameCount("B")
+	if(gameA>=win || gameB>=win){
+		const winner = gameA >= win ? "A" : "B"
 		finishMatch(winner)
 	}
+	// if(state.score.gameA>=win || state.score.gameB>=win){
+	// 	const winner = state.score.gameA >= win ? "A" : "B"
+	// 	finishMatch(winner)
+	// }
 }
 
 /* =====================================================
@@ -589,11 +596,11 @@ function getWindLabel(wind){
 		case "向風":
 			return "↓向風"
 
-		case "右風":
-			return "→右風"
-
 		case "左風":
-			return "←左風"
+			return "→左風"
+
+		case "右風":
+			return "←右風"
 
 		case "無風":
 			return "◯無風"
@@ -603,9 +610,121 @@ function getWindLabel(wind){
 	}
 }
 
+/* =====================================================
+	ゲームカウント取得処理
+   ===================================================== */
+   function getGameCount(team){
+	return state.gameResults.filter(game => game.winner === team).length
+}
+
+/* =====================================================
+   アプリの状態保存
+   ===================================================== */
+function saveState(){
+
+	localStorage.setItem(
+		"stInsightState",
+		JSON.stringify({
+
+			players: state.players,
+			isSingles: state.isSingles,
+			singleA: state.singleA,
+			singleB: state.singleB,
+
+			settings: state.settings,
+
+			score: state.score,
+			gameResults: state.gameResults,
+
+			selectedPlayerId: state.selectedPlayerId,
+
+			service: state.service,
+			serverRotation: state.serverRotation,
+			serveIndex: state.serveIndex,
+			is1stServe: state.is1stServe,
+			currentServer: state.currentServer,
+
+			isFinalGame: state.isFinalGame,
+
+			history: state.history,
+			historyStack: state.historyStack,	// ★リロード後のundo用に履歴も保存
+
+			serveStats: state.serveStats,
+			receiveStats: state.receiveStats,
+			shotStats: state.shotStats,
+
+			gameFinished: state.gameFinished,
+			matchFinished: state.matchFinished,
+
+			inputMode: state.inputMode,
+
+			wind: state.wind,
+			pendingWindLog: state.pendingWindLog
+		})
+	)
+}
+
+/* =====================================================
+   アプリの状態復元
+   ===================================================== */
+function loadState(){
+
+	const savedState = localStorage.getItem("stInsightState")
+
+	if(!savedState) return
+
+	const parsedState =	JSON.parse(savedState)
+
+	Object.assign(state, parsedState)
+}
+
+/* =====================================================
+   試合リセット処理
+   ・ローカルストレージの状態を削除してリロード
+   ・コンソールでstateを直接リセットする場合は以下のコードを実行
+   ===================================================== */
+function resetMatch(){
+	localStorage.removeItem("stInsightState");
+	location.reload();
+}
+function getSaveSize(){
+	return JSON.stringify(state).length
+}
+
+function setupEventHandlers(){
+	// ここにイベントハンドラ設定コードをまとめる（例: ボタンクリックなど）
+	const undoBtn = document.getElementById("undoBtn")
+	if(undoBtn){
+		undoBtn.addEventListener("click", undo)
+	}
+}
+
 function init(){
+	// 状態復元
+	loadState()
 	// バージョン情報表示
-	document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
+	//document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
+
+	/* 画面表示 */
+	if(state.score.pointA > 1 || state.score.pointB > 1 || state.gameResults.length > 0){
+		// 試合途中の場合は試合画面表示
+		document.getElementById("match").classList.remove("hidden")
+		document.getElementById("setup").classList.add("hidden")
+		document.getElementById("appInfo").classList.add("hidden")
+		createScoreboard()
+		initPlayers()
+		updateUI()
+	}else{
+		// 試合前の場合は設定画面表示
+		document.getElementById("match").classList.add("hidden")
+		document.getElementById("setup").classList.remove("hidden")
+		document.getElementById("appInfo").classList.remove("hidden")
+	}
+
+	// イベントハンドラ設定(ここではまだundoボタンのみ)
+	setupEventHandlers()
+	
+	updateUI()
 }
 
 init()

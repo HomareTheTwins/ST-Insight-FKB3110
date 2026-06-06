@@ -528,7 +528,7 @@ function pushState() {
 		settings: state.settings,	// ★いる？
 
 		score: state.score,
-		gameResults: state.gameResults,
+		gameResults: state.gameResults,	// ゲームごとのスコアと勝者を記録する
 		history: state.history,
 
 		shotStats: state.shotStats,
@@ -560,7 +560,7 @@ function pushState() {
 }
 
 function undo() {
-	if (!state.historyStack.length) return
+	if (!state.historyStack?.length) return
 
 	const prev = state.historyStack.pop()
 	if (!prev) return

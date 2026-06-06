@@ -70,27 +70,43 @@ function updatePoints(){
 	renderScoreboard()
 }
 
+/* =====================================================
+	スコアボードの描画
+	・ゲーム数に応じた表生成
+	====================================================== */
 function renderScoreboard(){
 	// スコアボードのハイライト等を削除
 	document.querySelectorAll(".scoreboard td").forEach(td=>{
 		td.classList.remove("win")
 	})
 	
-	// 取得ゲームのハイライト表示
+	// リロード後やUndo後に古いデータが残らないようにする
 	for(let i=1; i<=state.settings.games; i++){
-		let winner = state.gameResults[i]
-		
-		if(!winner) continue
-		
-		let cell = document.getElementById("g"+i+winner)
-		
+		document.getElementById("g"+i+"A").innerText = "-"
+		document.getElementById("g"+i+"B").innerText = "-"
+	}
+	
+	// 終了済みゲームのスコアと勝者を反映
+	state.gameResults.forEach((game, i) => {
+		const gameNo = i + 1
+		document.getElementById("g"+gameNo+"A").innerText = game.aPoints
+		document.getElementById("g"+gameNo+"B").innerText = game.bPoints
+
+		const cell = document.getElementById("g"+gameNo+game.winner)
 		if(cell){
 			cell.classList.add("win")
 		}
+	});
+
+	// 現在のゲームポイント更新
+	const currentGame = state.gameResults.length + 1
+	if(currentGame <= state.settings.games){
+		document.getElementById("g"+currentGame+"A").innerText = state.score.pointA
+		document.getElementById("g"+currentGame+"B").innerText = state.score.pointB
 	}
-	
-	document.getElementById("gameA").innerText = state.score.gameA
-	document.getElementById("gameB").innerText = state.score.gameB
+
+	document.getElementById("gameA").innerText = getGameCount("A")
+	document.getElementById("gameB").innerText = getGameCount("B")
 }
 /* =====================================================
    サーバー表示更新
@@ -139,13 +155,21 @@ function highlightWinner(){
 	})
 	
 	const win=Math.floor(state.settings.games/2)+1
-	if(state.score.gameA>=win || state.score.gameB>=win){
+	const gameA = getGameCount("A")
+	const gameB = getGameCount("B")
+	if(gameA>=win || gameB>=win){
 		// 勝者の選手(ペア)名とGAME列をハイライト
-		const winner = state.score.gameA >= win ? "A" : "B"
-		
+		const winner = gameA >= win ? "A" : "B"
 		document.getElementById("game"+winner).classList.add("matchEnd")
 		document.getElementById("pair"+winner).classList.add("matchEnd")
 	}
+	// if(state.score.gameA>=win || state.score.gameB>=win){
+	// 	// 勝者の選手(ペア)名とGAME列をハイライト
+	// 	const winner = state.score.gameA >= win ? "A" : "B"
+		
+	// 	document.getElementById("game"+winner).classList.add("matchEnd")
+	// 	document.getElementById("pair"+winner).classList.add("matchEnd")
+	// }
 }
 
 function displayForNextGame(){
@@ -474,12 +498,12 @@ function showMissTypeChoice(){
 				ミス内容を選択
 			</div>
 -->
-			<button class="popup-btn btn-unforced" onclick="selectMissType('凡ミス')">
-				凡ミス
-			</button>
-
 			<button class="popup-btn btn-attack" onclick="selectMissType('攻めミス')">
 				攻めミス
+			</button>
+
+			<button class="popup-btn btn-unforced" onclick="selectMissType('凡ミス')">
+				凡ミス
 			</button>
 
 			<button class="popup-btn btn-pressured" onclick="selectMissType('押し負け')">
@@ -647,7 +671,7 @@ function updateUndoButton(){
 	const btn = document.getElementById("undoBtn")
 	if(!btn) return
 
-	btn.disabled = state.historyStack.length === 0
+	btn.disabled = !state.historyStack?.length
 }
 
 /* =====================================================
@@ -695,6 +719,9 @@ function updateUI(){
 	updatePlayerButtons()
 	createShotButtons()
 	updateUndoButton()
-	updateWindButtons()		
+	updateWindButtons()
+
+	// 状態を保存
+	saveState()
 }
 

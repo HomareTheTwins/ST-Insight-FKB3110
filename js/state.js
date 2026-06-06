@@ -14,6 +14,7 @@ let state={
 
 	settings:{},
 
+	// ゲームスコア(ポイント、ゲームカウント、現在のゲーム)
 	score:{
 		pointA:0,			// Aのポイント
 		pointB:0,			// Bのポイント
@@ -22,7 +23,7 @@ let state={
 		currentGame:1		// 現在のゲーム
 	},
 	
-	gameResults: [],		// 各ゲームの勝者 ["A","B","A"...]
+	gameResults: [],		// 各ゲームのスコアと勝者 [{ aPoints: 4, bPoints: 2, winner: "A" }, { aPoints: 3, bPoints: 5, winner: "B" }...]
 
 	selectedPlayerId:"A1",	// 選択中の選手ID（例: A1/A2/B1/B2）
 	
@@ -39,7 +40,7 @@ let state={
 
 	
 	history:[],				// 試合履歴用
-	historyStack:[],		// undo用
+	historyStack:[],		// undo用（リロード後もundoできるように履歴を保存）★★★将来重くなる可能性あり★★★
 	
 	/* サービススタッツ */
 	serveStats:{
