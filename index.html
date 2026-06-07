@@ -76,16 +76,18 @@
 				</colgroup>
 			</table>
 
-			<div id="windArea">	
-				<button class="windBtn" onclick="changeWind(this, '追風')"><span class="windArrow">↑</span>追風</button>
-				<button class="windBtn" onclick="changeWind(this, '向風')"><span class="windArrow">↓</span>向風</button>
-				<button class="windBtn" onclick="changeWind(this, '右風')"><span class="windArrow">→</span>左風</button>
-				<button class="windBtn" onclick="changeWind(this, '左風')"><span class="windArrow">←</span>右風</button>
-				<button class="windBtn activeWind" onclick="changeWind(this, '無風')"><span class="windArrow">〇</span>無風</button>
-			</div>
-
-			<!-- 選手ボタン -->
 			<div class="player-area">
+
+				<div id="windArea" class="control-wind">	
+					<button class="windBtn" onclick="changeWind(this, '追風')"><span class="windArrow">↑</span>追風</button>
+					<button class="windBtn" onclick="changeWind(this, '向風')"><span class="windArrow">↓</span>向風</button>
+					<button class="windBtn" onclick="changeWind(this, '左風')"><span class="windArrow">→</span>左風</button>
+					<button class="windBtn" onclick="changeWind(this, '右風')"><span class="windArrow">←</span>右風</button>
+					<button class="windBtn activeWind" onclick="changeWind(this, '無風')"><span class="windArrow">〇</span>無風</button>
+				</div>
+
+				<button id="finishMatchBtn" type="button">試合終了</button>
+
 				<div class="player-group">
 					<div id="players">
 						<button class="playerBtn" id="btnA1"></button>
@@ -94,12 +96,13 @@
 						<button class="playerBtn" id="btnB2"></button>
 					</div>
 				</div>
-				<!-- 戻すボタン -->
-				<button id="undoBtn">↩ 戻す</button>
+
+				<button id="undoBtn" type="button">↩ 戻す</button>
+
 			</div>
 
 			<div id="betaLabel" class="beta-label">
-				Beta
+				Beta	<!-- ★ToDo 保護者用の場合は非表示-->
 			</div>
 
 			<!-- ショットボタン -->

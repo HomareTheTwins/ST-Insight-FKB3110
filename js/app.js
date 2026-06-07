@@ -691,11 +691,34 @@ function getSaveSize(){
 	return JSON.stringify(state).length
 }
 
+function confirmFinishMatch(){
+
+	const ok = confirm(
+		"試合を終了しますか？"
+	)
+
+	if(!ok) return
+
+	finishMatchFlow()
+}
+
+function finishMatchFlow(){
+
+	localStorage.removeItem("stInsightState")
+
+	location.reload()
+}
+
 function setupEventHandlers(){
 	// ここにイベントハンドラ設定コードをまとめる（例: ボタンクリックなど）
 	const undoBtn = document.getElementById("undoBtn")
 	if(undoBtn){
 		undoBtn.addEventListener("click", undo)
+	}
+
+	const finishMatchBtn = document.getElementById("finishMatchBtn")
+	if(finishMatchBtn){
+		finishMatchBtn.addEventListener("click", confirmFinishMatch)
 	}
 }
 
@@ -703,7 +726,7 @@ function init(){
 	// 状態復元
 	loadState()
 	// バージョン情報表示
-	//document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
+	document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
 
 	/* 画面表示 */
 	if(state.score.pointA > 1 || state.score.pointB > 1 || state.gameResults.length > 0){
