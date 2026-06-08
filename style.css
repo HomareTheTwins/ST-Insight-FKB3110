@@ -813,6 +813,10 @@ button{
 	opacity:0.8;
 }
 
+#appInfo{
+	text-transform:none;
+}
+
 /* ダブルタップ時の拡大防止 */
 html, body {
 	touch-action: manipulation;

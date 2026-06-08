@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "use:dev": "powershell -Command \"Copy-Item manifest.dev.json manifest.json -Force; Copy-Item service-worker.dev.js service-worker.js -Force; Copy-Item js/config.dev.js js/config.js -Force\"",
+    "use:beta": "powershell -Command \"Copy-Item manifest.beta.json manifest.json -Force; Copy-Item service-worker.beta.js service-worker.js -Force; Copy-Item js/config.beta.js js/config.js -Force\"",
+    "use:public": "powershell -Command \"Copy-Item manifest.public.json manifest.json -Force; Copy-Item service-worker.public.js service-worker.js -Force; Copy-Item js/config.public.js js/config.js -Force\""
+  }
+}

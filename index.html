@@ -55,8 +55,8 @@
 
 		</div>
 		
-		<!-- バージョン情報 -->
-		<div id="appInfo"></div>
+		<!-- 設定画面バージョン情報 -->
+		<div id="appInfo" class="beta-label"></div>
 		
 		<!-- 試合開始後画面 -->
 		<div id="match" class="hidden">
@@ -101,9 +101,8 @@
 
 			</div>
 
-			<div id="betaLabel" class="beta-label">
-				Beta	<!-- ★ToDo 保護者用の場合は非表示-->
-			</div>
+			<!-- 試合中画面 環境表示-->
+			<div id="envLabel" class="beta-label"></div>
 
 			<!-- ショットボタン -->
 			<div class="shot-grid" id="shotButtons"></div>
@@ -135,6 +134,7 @@
 			
 		</div>
 
+		<script src="js/config.js" defer></script>
 		<script src="js/state.js" defer></script>
 		<script src="js/serve.js" defer></script>
 		<script src="js/history.js" defer></script>

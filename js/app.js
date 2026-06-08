@@ -721,7 +721,8 @@ function init(){
 	// 状態復元
 	loadState()
 	// バージョン情報表示
-	document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
+	// document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
+	updateTopEnvLabel()
 
 	/* 画面表示 */
 	if(state.score.pointA > 1 || state.score.pointB > 1 || state.gameResults.length > 0){
@@ -739,10 +740,12 @@ function init(){
 		document.getElementById("appInfo").classList.remove("hidden")
 	}
 
+	updateEnvLabel()
+
 	// イベントハンドラ設定(ここではまだundoボタンのみ)
 	setupEventHandlers()
 	
-	updateUI()
+	//updateUI()
 }
 
 init()

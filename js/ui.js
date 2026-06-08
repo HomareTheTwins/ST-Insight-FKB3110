@@ -704,6 +704,38 @@ function updateWindButtons(){
 	}
 }
 
+function updateTopEnvLabel(){
+
+	const label = document.getElementById("appInfo")
+	if(!label) return
+
+	if(APP_CONFIG.ENV_LABEL){
+		label.innerText = APP_CONFIG.APP_NAME+" "+APP_CONFIG.APP_VERSION
+		label.classList.remove("hidden")
+	}else{
+		label.innerText = ""
+		label.classList.add("hidden")
+	}
+}
+
+/* =====================================================
+   環境表示更新
+   ・APP_CONFIG.ENV_LABELがある場合は表示、ない場合は非表示
+   ===================================================== */
+function updateEnvLabel(){
+
+	const label = document.getElementById("envLabel")
+	if(!label) return
+
+	if(APP_CONFIG.ENV_LABEL){
+		label.innerText = APP_CONFIG.ENV_LABEL
+		label.classList.remove("hidden")
+	}else{
+		label.innerText = ""
+		label.classList.add("hidden")
+	}
+}
+
 /* =====================================================
    UI全更新
    ===================================================== */
