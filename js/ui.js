@@ -163,31 +163,35 @@ function highlightWinner(){
 		document.getElementById("game"+winner).classList.add("matchEnd")
 		document.getElementById("pair"+winner).classList.add("matchEnd")
 	}
-	// if(state.score.gameA>=win || state.score.gameB>=win){
-	// 	// 勝者の選手(ペア)名とGAME列をハイライト
-	// 	const winner = state.score.gameA >= win ? "A" : "B"
-		
-	// 	document.getElementById("game"+winner).classList.add("matchEnd")
-	// 	document.getElementById("pair"+winner).classList.add("matchEnd")
-	// }
 }
 
 function displayForNextGame(){
-	if(!state.matchFinished) return
+	const isFinished = state.matchFinished
 	
 	/* 選手ボタン無効化 */
 	document.querySelectorAll(".playerBtn").forEach(b=>{
-	b.disabled=true
+		b.disabled=isFinished
 	})
 
-	/* 得点ボタン無効化 */
-	document.querySelectorAll("#shotButtons button").forEach(b=>{
-	b.disabled=true
-	})
+	/* 得点/失点ボタンを非表示 */
+	const shotButtons = document.getElementById("shotButtons")
+	if(shotButtons){
+		shotButtons.classList.toggle("hidden", isFinished)
+	}
 
 	/* 次の試合ボタン表示 */
-	document.getElementById("nextMatchBtn").classList.remove("hidden")
+	const nextMatchBtn = document.getElementById("nextMatchBtn")
+	if(nextMatchBtn){
+		nextMatchBtn.classList.toggle("hidden", !isFinished)
+	}
 
+	/* 試合終了時だけ得点履歴を閉じる */
+	if(isFinished){
+		const historyArea = document.getElementById("historyArea")
+		if(historyArea){
+			historyArea.classList.add("hidden")
+		}
+	}
 }
 
 /* =====================================================
@@ -720,6 +724,8 @@ function updateUI(){
 	createShotButtons()
 	updateUndoButton()
 	updateWindButtons()
+
+	displayForNextGame()
 
 	// 状態を保存
 	saveState()

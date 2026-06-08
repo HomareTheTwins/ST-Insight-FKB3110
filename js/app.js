@@ -519,14 +519,9 @@ function finishMatch(winner){
 
 	state.matchFinished = true;
 	
-	renderScoreboard()
-	renderServeStats()
-	updateCurrentGameHighlight()
-	highlightWinner();
-	
-	displayForNextGame()
+	updateUI()
 
-	alert("試合終了");
+	alert("試合終了");	// ★ToDo 将来、勝利チームとスコアを表示するように変更
 }
 
 /* =====================================================
