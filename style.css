@@ -29,6 +29,9 @@ button{
 	color: #666;
 	margin-top: 16px;
 }
+#appInfo{
+	text-transform:none;
+}
 
 /* 選手ボタン */
 .player-area {
@@ -811,10 +814,6 @@ button{
 	user-select:none;
 
 	opacity:0.8;
-}
-
-#appInfo{
-	text-transform:none;
 }
 
 /* ダブルタップ時の拡大防止 */

@@ -722,14 +722,13 @@ function init(){
 	loadState()
 	// バージョン情報表示
 	// document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
-	updateTopEnvLabel()
 
 	/* 画面表示 */
 	if(state.score.pointA > 1 || state.score.pointB > 1 || state.gameResults.length > 0){
 		// 試合途中の場合は試合画面表示
 		document.getElementById("match").classList.remove("hidden")
 		document.getElementById("setup").classList.add("hidden")
-		document.getElementById("appInfo").classList.add("hidden")
+		// document.getElementById("appInfo").classList.add("hidden")
 		createScoreboard()
 		initPlayers()
 		updateUI()
@@ -737,7 +736,8 @@ function init(){
 		// 試合前の場合は設定画面表示
 		document.getElementById("match").classList.add("hidden")
 		document.getElementById("setup").classList.remove("hidden")
-		document.getElementById("appInfo").classList.remove("hidden")
+		// document.getElementById("appInfo").classList.remove("hidden")
+		updateTopEnvLabel()
 	}
 
 	updateEnvLabel()
