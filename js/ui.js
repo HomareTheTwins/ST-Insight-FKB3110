@@ -704,6 +704,10 @@ function updateWindButtons(){
 	}
 }
 
+/* =====================================================
+	トップ画面のバージョン情報表示更新
+	・APP_CONFIG.ENV_LABELがある場合は表示、ない場合は非表示
+	===================================================== */
 function updateTopEnvLabel(){
 
 	const label = document.getElementById("appInfo")
@@ -719,7 +723,7 @@ function updateTopEnvLabel(){
 }
 
 /* =====================================================
-   環境表示更新
+   試合中画面の環境表示更新
    ・APP_CONFIG.ENV_LABELがある場合は表示、ない場合は非表示
    ===================================================== */
 function updateEnvLabel(){
@@ -728,7 +732,7 @@ function updateEnvLabel(){
 	if(!label) return
 
 	if(APP_CONFIG.ENV_LABEL){
-		label.innerText = APP_CONFIG.ENV_LABEL
+		label.innerText = APP_CONFIG.ENV_LABEL + " "+ APP_CONFIG.APP_VERSION
 		label.classList.remove("hidden")
 	}else{
 		label.innerText = ""
