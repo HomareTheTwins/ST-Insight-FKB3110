@@ -1,6 +1,6 @@
 const APP_CONFIG = {
 	APP_NAME: "ST-Insight",
-	APP_VERSION: "v0.35",
+	APP_VERSION: "v1.0",
 	ENV: "public",
-	ENV_LABEL: "public"	// 公開用は環境表示なし
+	ENV_LABEL: ""	// 公開用は環境表示なし
 }
