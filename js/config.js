@@ -1,6 +1,6 @@
 const APP_CONFIG = {
-	APP_NAME: "ST-Insight Dev",
+	APP_NAME: "ST-Insight",
 	APP_VERSION: "v1.0",
-	ENV: "dev",
-	ENV_LABEL: "ST-Insight Dev"
+	ENV: "public",
+	ENV_LABEL: "ST-Insight"	// 公開用は環境表示なし
 }
