@@ -84,7 +84,7 @@ let state={
 
 	/* 風の状態 */
 	wind: "無風",			// 追風、向風、右風、左風、無風	※風向きはundo/redoの対象外（画面上部に現在の風向き表示されているため
-	pendingWindLog: false	// 風の変更ログが保留中かどうか（true:保留中 / false:保留なし）		
+	pendingWindLog: false	// 風の変更ログが保留中かどうか（true:保留中 / false:保留なし）	
 }
 
 // ショット分析設定
@@ -98,4 +98,50 @@ const shotStatsConfig = {
 		mid:	"#ff9800",	// 50〜69%
 		low:	"#f44336"	// 50%未満
 	}
+}
+
+/* =====================================================
+   試合関連ステータス初期化処理
+   ===================================================== */
+function initMatchState(){
+	state.score = {
+		pointA:0,
+		pointB:0,
+		gameA:0,
+		gameB:0,
+		currentGame:1
+	}
+
+	state.gameResults = []
+	state.selectedPlayerId = "A1"
+	state.history = []
+	state.historyStack = []
+
+	state.shotStats = {}
+
+	state.serveStats = {
+		A1:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
+		A2:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
+		B1:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
+		B2:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 }
+	}
+
+	state.receiveStats = {
+		A1:{ receiveTotal:0, receiveIn:0 },
+		A2:{ receiveTotal:0, receiveIn:0 },
+		B1:{ receiveTotal:0, receiveIn:0 },
+		B2:{ receiveTotal:0, receiveIn:0 }
+	}
+
+	state.service = "A"
+	state.serverRotation = []
+	state.serveIndex = 0
+	state.is1stServe = true
+	state.currentServer = null
+
+	state.isFinalGame = false
+	state.gameFinished = false
+	state.matchFinished = false
+
+	selectedMissResult = null
 }

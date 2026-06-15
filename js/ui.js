@@ -481,6 +481,78 @@ function removeHandChoice(){
 }
 
 /* =====================================================
+	ミス結果表示ポップアップ
+	===================================================== */
+function showMissResultPopup(){
+	document.getElementById("missResultPopup").classList.remove("hidden")
+}
+
+function hideMissResultPopup(){
+	document.getElementById("missResultPopup").classList.add("hidden")
+}
+
+/* =====================================================
+	ミス結果表示ポップアップ
+	===================================================== */
+function showMissResultChoice(){
+
+	const overlay = document.createElement("div")
+
+	overlay.id = "missResultChoiceOverlay"
+
+	overlay.className = "popup-overlay"
+
+	overlay.innerHTML = `
+		<div class="hand-popup error-popup">
+
+			<div class="hand-title">
+				ミス結果
+			</div>
+
+			<button class="popup-btn btn-miss-net" onclick="selectMissResult('net')">
+				ネット
+			</button>
+
+			<button class="popup-btn btn-miss-out" onclick="selectMissResult('overOut')">
+				アウト
+			</button>
+
+			<button class="popup-btn btn-miss-sideout" onclick="selectMissResult('sideOut')">
+				サイドアウト
+			</button>
+
+			<button class="popup-btn btn-miss-front" onclick="selectMissResult('frontCaught')">
+				前衛捕球
+			</button>
+
+			<button class="popup-btn btn-miss-skip" onclick="selectMissResult('skipped')">
+				スキップ
+			</button>
+
+			<button class="popup-btn btn-cancel" id="btnMissResultCancel">
+				取消
+			</button>
+
+		</div>
+	`
+
+	document.body.appendChild(overlay)
+
+	document.getElementById("btnMissResultCancel").onclick = () => {
+		removeMissResultChoice()
+	}
+}
+
+function removeMissResultChoice(){
+
+	const overlay = document.getElementById("missResultChoiceOverlay")
+
+	if(overlay){
+		overlay.remove()
+	}
+}
+
+/* =====================================================
 	ミスの種類表示ポップアップ
 	===================================================== */
 function showMissTypeChoice(){
@@ -502,16 +574,20 @@ function showMissTypeChoice(){
 				ミス内容を選択
 			</div>
 -->
-			<button class="popup-btn btn-attack" onclick="selectMissType('攻めミス')">
+			<button class="popup-btn btn-attack" onclick="selectMissType('attack')">
 				攻めミス
 			</button>
 
-			<button class="popup-btn btn-unforced" onclick="selectMissType('凡ミス')">
+			<button class="popup-btn btn-unforced" onclick="selectMissType('unforced')">
 				凡ミス
 			</button>
 
-			<button class="popup-btn btn-pressured" onclick="selectMissType('押し負け')">
+			<button class="popup-btn btn-pressured" onclick="selectMissType('pressured')">
 				押し負け
+			</button>
+
+			<button class="popup-btn btn-miss-skip" onclick="selectMissType('skipped')">
+				スキップ
 			</button>
 
 			<button class="popup-btn btn-cancel" id="btnMissCancel">
@@ -525,7 +601,7 @@ function showMissTypeChoice(){
 
 	document.getElementById("btnMissCancel").onclick = () => {
 		removeMissTypeChoice()
-		//removeHandChoice()
+		showMissResultChoice()	// ミス結果選択UIを再表示
 	}
 }
 
@@ -606,50 +682,6 @@ function updateShotAreaColor(){
 	}else{
 		grid.classList.add("teamBActive")
 	}
-}
-
-/* =====================================================
-   試合関連ステータス初期化処理
-   ===================================================== */
-function initMatchState(){
-	state.score = {
-		pointA:0,
-		pointB:0,
-		gameA:0,
-		gameB:0,
-		currentGame:1
-	}
-
-	state.gameResults = []
-	state.selectedPlayerId = "A1"
-	state.history = []
-	state.historyStack = []
-
-	state.shotStats = {}
-
-	state.serveStats = {
-		A1:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
-		A2:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
-		B1:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
-		B2:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 }
-	}
-
-	state.receiveStats = {
-		A1:{ receiveTotal:0, receiveIn:0 },
-		A2:{ receiveTotal:0, receiveIn:0 },
-		B1:{ receiveTotal:0, receiveIn:0 },
-		B2:{ receiveTotal:0, receiveIn:0 }
-	}
-
-	state.service = "A"
-	state.serverRotation = []
-	state.serveIndex = 0
-	state.is1stServe = true
-	state.currentServer = null
-
-	state.isFinalGame = false
-	state.gameFinished = false
-	state.matchFinished = false
 }
 
 /* =====================================================

@@ -134,17 +134,22 @@ function renderHistory() {
 			prevWind = h.wind
 		}
 
-		// 表示用イベントラベルの取得（例: ストローク → ストローク（フォア））
+		// 表示用イベントラベルの取得
 		let displayEventLabel = h.eventName
 
 		// hand情報がある場合は表示用イベントラベルにhand情報を追加（例: ストローク → ストローク（フォア））
 		if (h.hand) {
-			displayEventLabel += `（${h.hand}）`
+			displayEventLabel += `(${h.hand})`
 		}
 
+		// ミス結果がある場合は表示用イベントラベルにミス結果情報を追加
+		if(h.missResult && h.missResult !== "skipped"){
+			displayEventLabel += `【${getMissResultLabel(h.missResult)}】`
+		}
+		
 		// ミスタイプがある場合は表示用イベントラベルにミスタイプ情報を追加（例: ストローク（フォア） → ストローク（フォア）[凡ミス]）
-		if(h.missType){
-			displayEventLabel += `[${h.missType}]`
+		if(h.missType && h.missType !== "skipped"){
+			displayEventLabel += `[${getMissTypeLabel(h.missType)}]`
 		}
 
 		// 履歴行のHTMLを返す（例: 田中：得点-ストローク（フォア）【追風】）

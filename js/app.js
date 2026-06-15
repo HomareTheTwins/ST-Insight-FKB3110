@@ -4,18 +4,37 @@
  無断転載・再配布禁止
 */
 
-// アプリ名
-const APP_NAME = "ST-Insight"
-
-// バージョン情報
-const APP_VERSION = "v0.34-Beta"	// service-workerのバージョンと合わせる
-
 // フォア/バック不要ショット
 const noHandShots = new Set([
 	"サービスエース",
 	"フォルト",
 	"ダブルフォルト"
 ])
+
+// 一時変数
+let selectedMissResult = null;	// 選択中のミス結果（ネット、アウト、サイドアウト、スキップなど）
+
+// ミス結果のラベル
+const MISS_RESULT_LABELS = {
+	net: "ネット",
+	overOut: "アウト",
+	sideOut: "サイドアウト",
+	frontCaught: "前衛捕球",
+	skipped: "スキップ"
+}
+
+// ミス分類のラベル
+const MISS_TYPE_LABELS = {
+	attack: "攻めミス",
+	unforced: "凡ミス",
+	pressured: "押し負け",
+	skipped: "スキップ"
+}
+
+function resetSelectedInputs(){
+	selectedMissResult = null
+	// 他の選択変数もここでリセット
+}
 
 /* =====================================================
    試合開始処理
@@ -30,6 +49,8 @@ function startMatch(){
 	/* 試合関連フラグ初期化 */
 	initMatchState()
 	
+	resetSelectedInputs()	// 選択変数リセット
+
 	// ① 生データ取得（ここではまだstateに入れない）
 	const A1 = document.getElementById("A1").value.trim();
 	const A2 = document.getElementById("A2").value.trim();
@@ -144,27 +165,27 @@ function initPlayers(){
    ===================================================== */
 function handleShotInput(name,type){
 
-	// 対象外 → 即処理
+	// フォア/バック対象外ショット → 即処理
 	if(noHandShots.has(name)){
 
 		if(type==="得点"){
 			recordShot(name)
 		}else{
-			recordError(name)
+			recordError(name, null, "skipped", "skipped")	// ミスタイプはスキップで記録
 		}
-
 		return
 	}
 
 	// 一時保存
 	state.pendingShot = {
-		name:name,		// ショット名
-		type:type,		// 得点 or 失点
-		hand:null,		// フォア/バックは後で選択
-		missType:null	// ミスの種類（凡ミス/攻めミス/押し負け）※失点のみ
+		name:name,			// ショット名
+		type:type,			// 得点 or 失点
+		hand:null,			// フォア/バックは後で選択
+		missResult:null,	// ミス結果（ネット、アウト、サイドアウト、スキップなど）
+		missType:null		// ミスの種類（凡ミス/攻めミス/押し負け）※失点のみ
 	}
 
-	// フォア/バック選択UI表示
+	// フォア/バック選択対象ショット→ポップアップ表示
 	showHandChoice()
 }
 
@@ -175,19 +196,23 @@ function selectHand(hand){
 
 	if(!state.pendingShot) return
 
+	// 得点時処理
 	if(state.pendingShot.type==="得点"){
 		recordShot(state.pendingShot.name, hand)
+
+	// 失点時処理
 	}else{
 		state.pendingShot.hand = hand	// ミスのショットにhand情報も追加してからrecordError呼び出す
 
 		// 詳細モードの場合はミスタイプ選択UI表示（ミスタイプ選択後にrecordError呼び出す）
 		if(state.inputMode === "detail"){
-			showMissTypeChoice()	// ミスタイプ選択UI表示（ミスタイプ選択後にrecordError呼び出す）
+			showMissResultChoice()	// ミス結果選択UI表示（ネット、アウト、サイドアウト、スキップなど）
+			//showMissTypeChoice()	// ミス分類選択UI表示（凡ミス/攻めミス/押し負け/スキップ） --> ミス結果選択の後にミス分類選択UI表示するように変更(ミス結果選択後にポップアップ表示する)
 			return
 		}
 
 		// 簡易モードの場合はミスタイプ選択なしでrecordError呼び出す
-		recordError(state.pendingShot.name, hand)
+		recordError(state.pendingShot.name, hand, "skipped", "skipped")	// ミスタイプとミス結果はスキップで記録
 	}
 
 	state.pendingShot = null
@@ -206,6 +231,20 @@ function cancelHand(){
 }
 
 /* =====================================================
+   ミス結果選択処理
+   ===================================================== */
+function selectMissResult(missResult){
+
+	if(!state.pendingShot) return
+
+	state.pendingShot.missResult = missResult
+
+	removeMissResultChoice()
+
+	showMissTypeChoice()
+}
+
+/* =====================================================
 	ミスの種類選択処理
 	・recordError呼び出し
 	・選択UI削除
@@ -217,7 +256,8 @@ function selectMissType(missType){
 	recordError(
 		state.pendingShot.name,
 		state.pendingShot.hand,
-		missType
+		state.pendingShot.missType || "skipped",	// ミスタイプが選択されていない場合は"skipped"で記録
+		state.pendingShot.missResult || "skipped"	// ミス結果が選択されていない場合は"skipped"で記録
 	)
 
 	state.pendingShot = null
@@ -285,7 +325,7 @@ function recordShot(shotName, hand = null){
 /* =====================================================
    ミスショット処理
    ===================================================== */
-function recordError(errorName, hand = null, missType = null){
+function recordError(errorName, hand = null, missType = "skipped", missResult = "skipped"){
 	// Undo用
 	pushState()
 
@@ -343,8 +383,9 @@ function recordError(errorName, hand = null, missType = null){
 	addHistory({
 		type: "失点",
 		eventName: errorName,
-		hand,					// ミスのショットにhand情報も追加
-		missType				// ミスタイプ（凡ミス/攻めミス/押し負け）も追加
+		hand,					// フォア/バック
+		missType,				// ミスタイプ（凡ミス/攻めミス/押し負け/スキップ）
+		missResult				// ミス結果（ネット/アウト/サイドアウト/スキップなど）
 	})
 
 	// 1ゲーム終了確認
@@ -613,6 +654,20 @@ function getWindLabel(wind){
 }
 
 /* =====================================================
+   ショットのミスタイプラベル取得処理
+   ===================================================== */
+function getMissTypeLabel(value){
+	return MISS_TYPE_LABELS[value] || value || ""
+}
+
+/* =====================================================
+	ミス結果のラベル取得処理
+   ===================================================== */
+function getMissResultLabel(value){
+	return MISS_RESULT_LABELS[value] || value || ""
+}
+
+/* =====================================================
    アプリの状態保存
    ===================================================== */
 function saveState(){
@@ -720,15 +775,13 @@ function setupEventHandlers(){
 function init(){
 	// 状態復元
 	loadState()
-	// バージョン情報表示
-	// document.getElementById("appInfo").innerText = `${APP_NAME} ${APP_VERSION}`
 
 	/* 画面表示 */
 	if(state.score.pointA > 1 || state.score.pointB > 1 || state.gameResults.length > 0){
 		// 試合途中の場合は試合画面表示
 		document.getElementById("match").classList.remove("hidden")
 		document.getElementById("setup").classList.add("hidden")
-		// document.getElementById("appInfo").classList.add("hidden")
+
 		createScoreboard()
 		initPlayers()
 		updateUI()
@@ -736,16 +789,16 @@ function init(){
 		// 試合前の場合は設定画面表示
 		document.getElementById("match").classList.add("hidden")
 		document.getElementById("setup").classList.remove("hidden")
-		// document.getElementById("appInfo").classList.remove("hidden")
+
+		// 設定画面のバージョン表示
 		updateTopEnvLabel()
 	}
 
+	// 試合中画面のバージョン表示
 	updateEnvLabel()
 
 	// イベントハンドラ設定(ここではまだundoボタンのみ)
 	setupEventHandlers()
-	
-	//updateUI()
 }
 
 init()

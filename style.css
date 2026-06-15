@@ -482,17 +482,58 @@ button{
 	color:#455a64;
 }
 
+/* ミス結果選択ボタン */
+.btn-miss-net{
+	background:#f8d7da;
+	color:#842029;
+	border:1px solid #f1aeb5;
+}
+
+.btn-miss-out{
+	background:#fff3cd;
+	color:#664d03;
+	border:1px solid #ffecb5;
+}
+
+.btn-miss-sideout{
+	background:#fff8e1;
+	color:#6f4e00;
+	border:1px solid #ffe08a;
+}
+
+.btn-miss-front{
+	background:#cfe2ff;
+	color:#084298;
+	border:1px solid #9ec5fe;
+}
+
+.btn-miss-skip{
+	background:#f8f9fa;
+	color:#6c757d;
+	border:1px solid #dee2e6;
+	font-weight:bold;
+}
+
 /* ミスの種類選択ボタン */
 .btn-unforced{
 	background:#ffcdd2;
+	color:#842029;
+	border:1px solid #f1aeb5;
+	font-weight:bold;
 }
 
 .btn-attack{
 	background:#ffe0b2;
+	color:#664d03;
+	border:1px solid #ffcc80;
+	font-weight:bold;
 }
 
 .btn-pressured{
 	background:#b3e5fc;
+	color:#055160;
+	border:1px solid #81d4fa;
+	font-weight:bold;
 }
 
 /* 詳細/簡易モード切替 */
@@ -597,7 +638,9 @@ button{
 }
 
 #historyArea{
-	display:flex;
+	font-size:12px;
+	line-height:1.35;
+		display:flex;
 	flex-direction:column;
 	gap:2px;
 }
@@ -611,12 +654,11 @@ button{
 }
 
 .historyRow{
-	display:flex;
-
+	font-size:12px;
+	line-height:1.35;
+		display:flex;
 	justify-content:space-between;
-
 	align-items:center;
-
 	width:100%;
 }
 
@@ -626,14 +668,10 @@ button{
 
 /* 風向き表示 */
 .windInline{
-	font-size:12px;
-
+	font-size:11px;
 	font-weight:bold;
-
 	color:#4aaee8;
-
 	margin-left:8px;
-
 	display:inline-flex;
 	align-items:center;
 	gap:2px;
