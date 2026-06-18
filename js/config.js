@@ -1,6 +1,6 @@
 window.APP_CONFIG = {
-	APP_NAME: "ST-Insight Beta",
-	APP_VERSION: "v0.9.0",
-	ENV: "beta",
-	ENV_LABEL: "ST-Insight Beta"
+	APP_NAME: "ST-Insight",
+	APP_VERSION: "v1.00",
+	ENV: "public",
+	ENV_LABEL: "ST-Insight"	// 公開用は環境表示なし
 }
