@@ -861,3 +861,20 @@ button {
 	-webkit-user-select: none;
 	user-select: none;
 }
+
+/* β版注意事項 */
+.betaNotice{
+	margin-top:20px;
+	padding:10px;
+	font-size:12px;
+	line-height:1.5;
+	color:#555;
+	background:#f8f9fa;
+	border:1px solid #ddd;
+	border-radius:8px;
+}
+
+.betaNotice a{
+	color:#0d6efd;
+	text-decoration:underline;
+}

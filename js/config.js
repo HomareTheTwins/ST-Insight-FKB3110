@@ -1,4 +1,4 @@
-const APP_CONFIG = {
+window.APP_CONFIG = {
 	APP_NAME: "ST-Insight Dev",
 	APP_VERSION: "v1.01",
 	ENV: "dev",

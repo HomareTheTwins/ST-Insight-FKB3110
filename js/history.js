@@ -9,7 +9,6 @@
    ・得点/失点の内容と選手名を履歴に保存
    ・ショット統計用の情報も保存（hand/course/missType/missResult）
    ===================================================== */
-// function addHistory(type, name, player = null) {
 function addHistory(eventData) {
 	// eventDataから必要な情報を分割代入で取得（objectで受け取る形に変更）
 	const {
@@ -27,18 +26,21 @@ function addHistory(eventData) {
 	} = eventData
 
 	// system表示用
-	let playerName = ""
+	// let playerName = ""
 
 	// 選手名が必要な履歴タイプのみ選手名取得
 	const needPlayerTypes = ["得点", "失点"]
-	if (needPlayerTypes.includes(type)) {
-		playerName = player || state.players[state.selectedPlayerId] || state.selectedPlayerId // ★選手IDから選手名を取得（例: A1 → 田中）. プレイヤーIDが見つからない場合はIDを表示
-	}
 
-	// 履歴追加
+	const playerId =needPlayerTypes.includes(type) ? (player || state.selectedPlayerId || null) : null
+
+	const playerName = playerId ? (state.players[playerId] || playerId) : ""
+
+	// 履歴に追加(このデータは統計管理にも活用されるため、必要な情報を全て保存する形に変更)
 	state.history.push({
 		type,				// 履歴タイプ（例: 得点/失点/system）
 		eventName,			// 履歴内容（例: サーブ/フォアハンド/ゲーム開始）
+
+		playerId,			// 履歴表示用の選手ID（例: A1/A2/B1/B2）★統計管理用
 		player: playerName,	// 履歴表示用の選手名（例: 田中）
 
 		hand,				// フォア/バック管理用（例: fore/back）★統計管理用
@@ -51,53 +53,6 @@ function addHistory(eventData) {
 
 		time: Date.now()	// タイムスタンプ（必要に応じて） ★履歴の時間管理に活用できるかも
 	})
-
-	/* =========================
-	   システム履歴＆環境履歴の場合は以下の処理で終了
-	   ========================= */
-	if (type === "system") {
-		// 表示中なら再描画
-		if (!document.getElementById("historyArea").classList.contains("hidden")) {
-			renderHistory()
-		}
-		return
-	}
-
-	/* =========================
-	   ショット統計　更新
-	   1. ショット名の作成（例: ストローク（フォア））★hand情報も含める形に変更
-	   2. 得点/失点でショット統計を更新
-	   3. 表示中なら再描画
-	   ========================= */
-	// 初期化
-	const playerId = state.selectedPlayerId	// ★選手IDを状態から取得（例: A1/A2/B1/B2）
-
-	if (!state.shotStats[playerId]) {
-		state.shotStats[playerId] = {
-			shots: {}	// win / error管理
-		}
-	}
-
-	// 集計用ショット名作成（例: ストローク（フォア））★hand情報も含める形に変更
-	// ToDo★ 今後もしhand以外の情報も追加する可能性があるため、shotNameは統計管理用の名前として使用（履歴表示にはeventData.nameを使用）
-	// 例: ストローク（フォア）/ ストローク（バック）/ ストローク（フォア/クロス）など
-	const statShotName = hand ? `${eventName}（${hand}）` : eventName
-
-	// 得点
-	if (type === "得点") {
-		if (!state.shotStats[playerId].shots[statShotName]) {
-			state.shotStats[playerId].shots[statShotName] = { win: 0, error: 0 }
-		}
-		state.shotStats[playerId].shots[statShotName].win++
-	}
-
-	// 失点
-	if (type === "失点") {
-		if (!state.shotStats[playerId].shots[statShotName]) {
-			state.shotStats[playerId].shots[statShotName] = { win: 0, error: 0 }
-		}
-		state.shotStats[playerId].shots[statShotName].error++
-	}
 
 	// 表示中なら再描画
 	if (!document.getElementById("historyArea").classList.contains("hidden")) {
@@ -135,7 +90,7 @@ function renderHistory() {
 		}
 
 		// 表示用イベントラベルの取得
-		let displayEventLabel = h.eventName
+		let displayEventLabel = getShotLabel(h.eventName)	
 
 		// hand情報がある場合は表示用イベントラベルにhand情報を追加（例: ストローク → ストローク（フォア））
 		if (h.hand) {
@@ -244,9 +199,13 @@ function shotStatistics() {
 	area.innerHTML = ""
 
 	// =========================
+	// 表示順
+	// =========================
+	const playerOrder = ["A1", "A2", "B1", "B2"]
+
+	// =========================
 	// ヘッダー
 	// =========================
-	// 全ショット表示ボタン
 	let headerRow = document.createElement("div")
 	headerRow.className = "shot-header-row"
 
@@ -272,7 +231,7 @@ function shotStatistics() {
 	area.appendChild(headerRow)
 
 	// =========================
-	// 集計
+	// 集計用オブジェクト初期化
 	// =========================
 	let teamTotals = {
 		A: { win: 0, error: 0 },
@@ -281,136 +240,185 @@ function shotStatistics() {
 
 	let playerStats = {}
 
-	// ===== 集計（安全版） =====
-	for (let player in (state.shotStats || {})) {
+	playerOrder.forEach(playerId => {
+		const team = playerId.startsWith("A") ? "A" : "B"
 
-		let raw = state.shotStats[player] || {}
-		let shots = raw.shots || {}
-
-		// ★ チーム判定（安全）
-		const team = player.startsWith("A") ? "A" : "B"
-
-		let totalWin = 0
-		let totalError = 0
-		let shotArray = []
-
-		// ★ shotsが空でもOK
-		for (let shot in shots) {
-
-			let s = shots[shot] || { win: 0, error: 0 }
-
-			let w = s.win || 0
-			let e = s.error || 0
-
-			totalWin += w
-			totalError += e
-
-			let total = w + e
-			let rate = total > 0 ? Math.round(w / total * 100) : 0
-
-			shotArray.push({
-				name: shot,
-				win: w,
-				error: e,
-				rate: rate,
-				total: total
-			})
-		}
-
-		shotArray.sort((a, b) => b.total - a.total)
-
-		playerStats[player] = {
-			shots: shotArray,
-			win: totalWin,
-			error: totalError,
+		playerStats[playerId] = {
+			shotsMap: {},	// 一時集計用
+			shots: [],		// 表示用配列
+			win: 0,
+			error: 0,
 			team: team
 		}
+	})
 
-		teamTotals[team].win += totalWin
-		teamTotals[team].error += totalError
-	}
+	// =========================
+	// history からショット集計作成
+	// =========================
+	;(state.history || []).forEach(h => {
 
-	// ===== 表示（個人） =====
-	let order = ["A1", "A2", "B1", "B2"]	// 表示順固定
+		// 得点・失点以外は集計しない
+		if (!["得点", "失点"].includes(h.type)) return
 
-	order.forEach(player => {
+		// ショット名がないものは集計しない
+		if (!h.eventName) return
 
-		let ps = playerStats[player];
-		if (!ps) return;
+		// playerId がない旧データ対策
+		const playerId = h.playerId || null
+		if (!playerId) return
 
-		let wrapper = document.createElement("div");
-		wrapper.className = "shot-player";
+		// A1/A2/B1/B2 以外は集計しない
+		if (!playerStats[playerId]) return
+
+		const shotKey = h.eventName
+		const hand = h.hand || null
+
+		const statKey = makeShotStatKey({
+			shotKey: shotKey,
+			hand: hand
+		})
+
+		if (!playerStats[playerId].shotsMap[statKey]) {
+			playerStats[playerId].shotsMap[statKey] = {
+				shotKey: shotKey,
+				hand: hand,
+				win: 0,
+				error: 0
+			}
+		}
+
+		if (h.type === "得点") {
+			playerStats[playerId].shotsMap[statKey].win++
+			playerStats[playerId].win++
+		}
+
+		if (h.type === "失点") {
+			playerStats[playerId].shotsMap[statKey].error++
+			playerStats[playerId].error++
+		}
+	})
+
+	// =========================
+	// shotsMap を表示用配列に変換
+	// =========================
+	playerOrder.forEach(playerId => {
+
+		const ps = playerStats[playerId]
+		if (!ps) return
+
+		ps.shots = Object.values(ps.shotsMap).map(s => {
+
+			const win = s.win || 0
+			const error = s.error || 0
+			const total = win + error
+			const rate = total > 0 ? Math.round(win / total * 100) : 0
+
+			return {
+				shotKey: s.shotKey,
+				hand: s.hand,
+				win: win,
+				error: error,
+				total: total,
+				rate: rate
+			}
+		})
+
+		// 試行数が多い順に並べる
+		ps.shots.sort((a, b) => b.total - a.total)
+
+		// チーム合計
+		const team = ps.team
+
+		teamTotals[team].win += ps.win
+		teamTotals[team].error += ps.error
+	})
+
+	// =========================
+	// 表示（個人）
+	// =========================
+	playerOrder.forEach(player => {
+
+		let ps = playerStats[player]
+		if (!ps) return
+
+		// まだ何も記録がない選手は表示しない
+		if (ps.shots.length === 0 && ps.win === 0 && ps.error === 0) return
+
+		let wrapper = document.createElement("div")
+		wrapper.className = "shot-player"
 
 		// ===== ヘッダー（クリック部分） =====
-		let header = document.createElement("div");
-		header.className = "toggle-header";
-		header.classList.add(player.startsWith("A") ? "teamA" : "teamB");
+		let header = document.createElement("div")
+		header.className = "toggle-header"
+		header.classList.add(player.startsWith("A") ? "teamA" : "teamB")
 
-		let isOpen = state.ui.openPlayers[player] ?? true;
+		let isOpen = state.ui.openPlayers[player] ?? true
 
 		header.innerHTML = `
 			<span>${state.players[player] || player}</span>
 			<span class="toggle-icon">${isOpen ? "▼" : "▶"}</span>
-		`;
+		`
 
 		// ===== コンテンツ =====
-		let content = document.createElement("div");
-		content.style.display = isOpen ? "block" : "none";
+		let content = document.createElement("div")
+		content.style.display = isOpen ? "block" : "none"
 
 		header.onclick = () => {
-			let current = state.ui.openPlayers[player] ?? true;
-			let next = !current;
+			let current = state.ui.openPlayers[player] ?? true
+			let next = !current
 
-			state.ui.openPlayers[player] = next;
+			state.ui.openPlayers[player] = next
 
-			content.style.display = next ? "block" : "none";
-			header.querySelector(".toggle-icon").textContent = next ? "▼" : "▶";
-		};
+			content.style.display = next ? "block" : "none"
+			header.querySelector(".toggle-icon").textContent = next ? "▼" : "▶"
+		}
 
 		// ===== 成功率 =====
-		let title1 = document.createElement("div");
-		title1.innerHTML = "【ショット成功率】<small>※ 成功 /（成功＋ミス）</small>";
-		content.appendChild(title1);
+		let title1 = document.createElement("div")
+		title1.innerHTML = "【ショット成功率】<small>※ 成功 /（成功＋ミス）</small>"
+		content.appendChild(title1)
 
-		let shots = Array.isArray(ps.shots) ? ps.shots : [];
-		let limit = shotStatsConfig?.showTopN ?? 5;
+		let shots = Array.isArray(ps.shots) ? ps.shots : []
+		let limit = shotStatsConfig?.showTopN ?? 5
 
 		let displayShots = state.ui.showAllShots
 			? shots
-			: shots.slice(0, limit);
+			: shots.slice(0, limit)
 
-		if (!Array.isArray(displayShots)) return;
+		if (!Array.isArray(displayShots)) return
 
 		displayShots.forEach((s, i) => {
 
-			let color = "";
+			let color = ""
 
 			if (shotStatsConfig?.enableColor) {
-				if (s.rate >= 70) color = shotStatsConfig.color.high;
-				else if (s.rate >= 50) color = shotStatsConfig.color.mid;
-				else color = shotStatsConfig.color.low;
+				if (s.rate >= 70) color = shotStatsConfig.color.high
+				else if (s.rate >= 50) color = shotStatsConfig.color.mid
+				else color = shotStatsConfig.color.low
 			}
 
 			let bold = (i === 0 && shotStatsConfig.highlightBest)
 				? "font-weight:bold;"
-				: "";
+				: ""
 
-			let line = document.createElement("div");
+			let line = document.createElement("div")
 			line.innerHTML = `
 				<span style="color:${color};${bold}">
-				${s.name}：${s.rate}% (${s.win}/${s.total})
+				${getShotStatLabel(s)}：${s.rate}% (${s.win}/${s.total})
 				</span>
-			`;
+			`
 
-			content.appendChild(line);
-		});
+			content.appendChild(line)
+		})
 
-		wrapper.appendChild(header);
-		wrapper.appendChild(content);
-		area.appendChild(wrapper);
-	});
+		wrapper.appendChild(header)
+		wrapper.appendChild(content)
+		area.appendChild(wrapper)
+	})
 
-	// ===== ペア分析 =====
+	// =========================
+	// ペア分析
+	// =========================
 	if (!state.isSingles) {
 		let pairDiv = document.createElement("div")
 		pairDiv.className = "shot-pair"
@@ -418,7 +426,7 @@ function shotStatistics() {
 		// ===== ヘッダー =====
 		let header = document.createElement("div")
 		header.className = "toggle-header"
-		header.classList.add("pair-header");
+		header.classList.add("pair-header")
 
 		let isOpen = state.ui.openPair
 
@@ -429,65 +437,63 @@ function shotStatistics() {
 
 		// ===== コンテンツ =====
 		let content = document.createElement("div")
-
 		content.style.display = isOpen ? "block" : "none"
 
 		header.onclick = () => {
 			state.ui.openPair = !state.ui.openPair
 			content.style.display = state.ui.openPair ? "block" : "none"
-			// アイコン更新
+
 			header.querySelector(".toggle-icon").textContent = state.ui.openPair ? "▼" : "▶"
 		}
 
-			;["A", "B"].forEach(team => {
+		;["A", "B"].forEach(team => {
 
-				// let members = Object.keys(playerStats).filter(p => p.startsWith(team))
-				const order = team === "A" ? ["A1","A2"] : ["B1","B2"];
+			const pairOrder = team === "A" ? ["A1", "A2"] : ["B1", "B2"]
 
-				const teamLabel = order
-					.filter(p => playerStats[p])
-					.map(p => state.players[p] || p)
-					.join("＆");
+			const teamLabel = pairOrder
+				.filter(p => playerStats[p])
+				.map(p => state.players[p] || p)
+				.join("＆")
 
-				content.innerHTML += `
-					<div style="
-						margin-top:14px;
-						padding:6px 0;
-						border-top:1px solid #ddd;
-						font-weight:bold;
-					">
-					【${teamLabel}】
-					</div>
-				`;
+			content.innerHTML += `
+				<div style="
+					margin-top:14px;
+					padding:6px 0;
+					border-top:1px solid #ddd;
+					font-weight:bold;
+				">
+				【${teamLabel}】
+				</div>
+			`
 
-				// ===== 得点寄与 =====
-				content.innerHTML += "<div>■ 得点寄与</div>"
+			// ===== 得点寄与 =====
+			content.innerHTML += "<div>■ 得点寄与</div>"
 
-				order.forEach(p => {
-					let ps = playerStats[p]
-					if (!ps) return;
+			pairOrder.forEach(p => {
+				let ps = playerStats[p]
+				if (!ps) return
 
-					let winRate = teamTotals[team].win
-						? Math.round(ps.win / teamTotals[team].win * 100)
-						: 0
+				let winRate = teamTotals[team].win
+					? Math.round(ps.win / teamTotals[team].win * 100)
+					: 0
 
-					content.innerHTML += `${state.players[p] || p}：${winRate}%<br>`
-				})
-
-				// ===== ミス寄与 =====
-				content.innerHTML += "<div style='color:#aaa'>■ ミス寄与</div>"
-
-				order.forEach(p => {
-					let ps = playerStats[p]
-					if (!ps) return;
-					
-					let errRate = teamTotals[team].error
-						? Math.round(ps.error / teamTotals[team].error * 100)
-						: 0
-
-					content.innerHTML += `<span style="color:#aaa">${state.players[p] || p}：${errRate}%</span><br>`
-				})
+				content.innerHTML += `${state.players[p] || p}：${winRate}%<br>`
 			})
+
+			// ===== ミス寄与 =====
+			content.innerHTML += "<div style='color:#aaa'>■ ミス寄与</div>"
+
+			pairOrder.forEach(p => {
+				let ps = playerStats[p]
+				if (!ps) return
+
+				let errRate = teamTotals[team].error
+					? Math.round(ps.error / teamTotals[team].error * 100)
+					: 0
+
+				content.innerHTML += `<span style="color:#aaa">${state.players[p] || p}：${errRate}%</span><br>`
+			})
+		})
 
 		pairDiv.appendChild(header)
 		pairDiv.appendChild(content)
@@ -536,7 +542,6 @@ function pushState() {
 		gameResults: state.gameResults,	// ゲームごとのスコアと勝者を記録する
 		history: state.history,
 
-		shotStats: state.shotStats,
 		serveStats: state.serveStats,
 		receiveStats: state.receiveStats,
 
@@ -578,7 +583,6 @@ function undo() {
 	state.gameResults = prev.gameResults
 	state.history = prev.history
 
-	state.shotStats = prev.shotStats
 	state.serveStats = prev.serveStats
 	state.receiveStats = prev.receiveStats
 

@@ -19,9 +19,6 @@
 	</head>
 
 	<body>
-
-<!--		<h2>SoftTennisInsight</h2>	タイトル無いほうが表示数増えるためコメントアウト-->
-
 		<!-- 試合設定 -->
 		<div id="setup">
 
@@ -55,7 +52,17 @@
 
 			<!-- 設定画面バージョン情報 -->
 			<div id="appInfo" class="beta-label"></div>
-		</div>
+
+			<!-- β版注意事項-->
+			 <div id="betaNotice" class="betaNotice hidden">
+				<strong>ST-Insight β版</strong><br>
+				現在、試験公開中です。不具合やご要望があれば、ThreadsまたはInstagramのDMからお知らせください。<br>
+				※入力データはこの端末のブラウザ内に保存されます。ブラウザのデータ削除や端末変更により消える場合があります。<br>
+				<a href="https://www.threads.com/@homare.the.twins?igshid=NTc4MTlwNjQ2YQ==" target="_blank" rel="noopener noreferrer">Threads</a>
+				/ 
+				<a href="https://www.instagram.com/stinsight_app?igsh=cjJseGxvaTZ1bmxv&utm_source=qr/" target="_blank" rel="noopener noreferrer">Instagram</a>
+			</div>
+		</div> <!-- 設定画面 終了-->
 		
 		<!-- 試合開始後画面 -->
 		<div id="match" class="hidden">
@@ -131,7 +138,7 @@
 				<button id="nextMatchBtn" class="hidden" onclick="nextMatch()">次の試合</button>
 			</div>
 			
-		</div>
+		</div> <!-- 試合中画面 終了-->
 
 		<script src="js/config.js" defer></script>
 		<script src="js/state.js" defer></script>

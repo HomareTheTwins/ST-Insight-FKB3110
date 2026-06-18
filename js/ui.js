@@ -252,11 +252,11 @@ function createShotButtons(){
 
 		let btn=document.createElement("button")
 
-		btn.innerText=s.name
+		btn.innerText=s.label
 		btn.className=s.type
 
 		btn.disabled = state.matchFinished
-		btn.onclick=()=>handleShotInput(s.name,"得点")
+		btn.onclick=()=>handleShotInput(s.key,"得点")
 
 		grid.appendChild(btn)
 
@@ -286,11 +286,11 @@ function createShotButtons(){
 
 		if(e.isFault){
 			btn.id = "btnFault"
-			btn.innerText = (state.is1stServe==false)? "ダブルフォルト" : "フォルト"
+			btn.innerText = e.label //(state.is1stServe==false)? "ダブルフォルト" : "フォルト"
 			btn.onclick=()=>serveFault()
 		}else{
-			btn.innerText=e.name
-			btn.onclick=()=>handleShotInput(e.name,"失点")
+			btn.innerText=e.label
+			btn.onclick=()=>handleShotInput(e.key,"失点")
 		}
 
 		grid.appendChild(btn)
@@ -303,37 +303,38 @@ function createShotButtons(){
 
 /* 詳細モードボタン：ベース配列 */
 const detailShotsBase = [
-	{key :"ace",			type:"shot-back"},
-	{name:"ストローク",		type:"shot-back"},
-	{name:"ロブ",			type:"shot-back"},
-	{name:"中ロブ",			type:"shot-back"},
-	{name:"ショートクロス",	type:"shot-back"},
+	{key :"ace",		type:"shot-back"},
+	{key:"stroke",		type:"shot-back"},
+	{key:"lob",			type:"shot-back"},
+	{key:"midLob",		type:"shot-back"},
+	{key:"shortCross",	type:"shot-back"},
 
-	{name:"パッシング",		type:"shot-common"},
-	{name:"前衛アタック",	type:"shot-common"},
-	{name:"カット",			type:"shot-common"},
-	{name:"ドロップ",		type:"shot-common"},
-	{name:"ツイスト",		type:"shot-common"},
+	{key:"passing",		type:"shot-common"},
+	{key:"attack",		type:"shot-common"},
+	{key:"slice",		type:"shot-common"},
+	{key:"cut",			type:"shot-common"},
+	{key:"drop",		type:"shot-common"},
+//	{key:"twist",		type:"shot-common"},	// スライス追加のためドロップに統合★
 
-	{name:"ボレー",			type:"shot-front"},
-	{name:"ポーチ",			type:"shot-front"},
-	{name:"スマッシュ",		type:"shot-front"},
-	{name:"ローボレー",		type:"shot-front"},
-	{name:"ハイボレー",		type:"shot-front"},
+	{key:"volley",		type:"shot-front"},
+	{key:"poach",		type:"shot-front"},
+	{key:"smash",		type:"shot-front"},
+	{key:"lowVolley",	type:"shot-front"},
+	{key:"highVolley",	type:"shot-front"},
 ]
 
 /* 簡易モード：ベース配列 */
 const simpleShotsBase = [
-	{key :"ace",			type:"shot-back"},
-	{name:"ストローク",		type:"shot-back"},
-	{name:"ロブ",			type:"shot-back"},
-	{name:"ショートクロス",	type:"shot-back"},
+	{key :"ace",		type:"shot-back"},
+	{key:"stroke",		type:"shot-back"},
+	{key:"lob",			type:"shot-back"},
+	{key:"shortCross",	type:"shot-back"},
 
-	{name:"前衛アタック",	type:"shot-common"},
-	{name:"ドロップ",		type:"shot-common"},
+	{key:"attack",		type:"shot-common"},
+	{key:"drop",		type:"shot-common"},
 
-	{name:"ボレー",			type:"shot-front"},
-	{name:"スマッシュ",		type:"shot-front"},
+	{key:"volley",		type:"shot-front"},
+	{key:"smash",		type:"shot-front"},
 ]
 
 /* =====================================================
@@ -348,10 +349,15 @@ function createShots(isServer){
 		if(shot.key === "ace"){
 			return {
 				...shot,
-				name:aceName
+				label: isServer ? "サービスエース" : "リターンエース",
+				// name:aceName
+				key: isServer ? "serviceAce" : "returnAce",
 			}
 		}
-		return shot
+		return {
+			...shot,
+			label: getShotLabel(shot.key)
+		}
 	})
 	
 	return shots
@@ -359,41 +365,42 @@ function createShots(isServer){
 
 /* 詳細モードボタン：ベース配列(ミス) */
 const detailMissShotsBase = [
-	{key :"fault",			type:"error-fault",isFault:true},
-	{name:"レシーブ",		type:"error-back",receiveOnly:true},
+	{key :"fault",		type:"error-fault",isFault:true},
+	{key:"receive",		type:"error-back",receiveOnly:true},
 
-	{name:"ストローク",		type:"error-back"},
-	{name:"ロブ",			type:"error-back"},
-	{name:"中ロブ",			type:"error-back"},
-	{name:"ショートクロス",	type:"error-back"},
+	{key:"stroke",		type:"error-back"},
+	{key:"lob",			type:"error-back"},
+	{key:"midLob",		type:"error-back"},
+	{key:"shortCross",	type:"error-back"},
 
-	{name:"パッシング",		type:"error-common"},
-	{name:"前衛アタック",	type:"error-common"},
-	{name:"カット",			type:"error-common"},
-	{name:"ドロップ",		type:"error-common"},
-	{name:"ツイスト",		type:"error-common"},
+	{key:"passing",		type:"error-common"},
+	{key:"attack",		type:"error-common"},
+	{key:"slice",		type:"error-common"},
+	{key:"cut",			type:"error-common"},
+	{key:"drop",		type:"error-common"},
+//	{key:"twist",		type:"error-common"},	// スライス追加のためdropに統合★
 	
-	{name:"ボレー",			type:"error-front"},
-	{name:"ポーチ",			type:"error-front"},
-	{name:"スマッシュ",		type:"error-front"},
-	{name:"ローボレー",		type:"error-front"},
-	{name:"ハイボレー",		type:"error-front"}
+	{key:"volley",		type:"error-front"},
+	{key:"poach",		type:"error-front"},
+	{key:"smash",		type:"error-front"},
+	{key:"lowVolley",	type:"error-front"},
+	{key:"highVolley",	type:"error-front"}
 ]
 
 /* 簡易モード：ベース配列(ミス) */
 const simpleMissShotsBase = [
-	{key :"fault",			type:"error-fault",isFault:true},
-	{name:"レシーブ",		type:"error-back",receiveOnly:true},
+	{key :"fault",		type:"error-fault",isFault:true},
+	{key:"receive",		type:"error-back",receiveOnly:true},
 
-	{name:"ストローク",		type:"error-back"},
-	{name:"ロブ",			type:"error-back"},
-	{name:"ショートクロス",	type:"error-back"},
+	{key:"stroke",		type:"error-back"},
+	{key:"lob",			type:"error-back"},
+	{key:"shortCross",	type:"error-back"},
 
-	{name:"前衛アタック",	type:"error-common"},
-	{name:"ドロップ",		type:"error-common"},
+	{key:"attack",		type:"error-common"},
+	{key:"drop",		type:"error-common"},
 	
-	{name:"ボレー",			type:"error-front"},
-	{name:"スマッシュ",		type:"error-front"},
+	{key:"volley",		type:"error-front"},
+	{key:"smash",		type:"error-front"},
 ]
 
 /* =====================================================
@@ -408,10 +415,16 @@ function createMissShots(is1stServe){
 		if(shot.key === "fault"){
 			return {
 				...shot,
-				name:faultName
+				//name:faultName
+				label: is1stServe ? "フォルト" : "ダブルフォルト",
+				key: is1stServe ? "fault" : "doubleFault",
+				//isFault: true
 			}
 		}
-		return shot
+		return {
+			...shot,
+			label: getShotLabel(shot.key)
+		}
 	})
 	
 	return shots
@@ -430,7 +443,7 @@ function showHandChoice(){
 	overlay.id = "handOverlay"
 	overlay.className = "popup-overlay"
 
-	let shotName = state.pendingShot?.name || ""
+	let shotName = getShotLabel(state.pendingShot?.shotKey) || state.pendingShot?.shotKey || ""
 
 	// ★ 得点 / 失点
 	let popupClass =
@@ -769,6 +782,17 @@ function updateEnvLabel(){
 	}else{
 		label.innerText = ""
 		label.classList.add("hidden")
+	}
+}
+
+function updateBetaNotice(){
+	const betaNotice = document.getElementById("betaNotice")
+	if(!betaNotice) return
+
+	if(window.APP_CONFIG?.ENV === "beta"){
+		betaNotice.classList.remove("hidden")
+	}else{
+		betaNotice.classList.add("hidden")
 	}
 }
 

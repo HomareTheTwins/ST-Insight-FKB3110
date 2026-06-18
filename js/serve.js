@@ -154,7 +154,9 @@ function serveFault() {
 		
 		addHistory({
 			type: "失点",
-			eventName: "ダブルフォルト"
+			eventName: "doubleFault",
+			missResult: "skipped",
+			missType: "skipped"
 		})
 
 		state.is1stServe = true
