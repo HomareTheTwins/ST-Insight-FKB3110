@@ -31,7 +31,7 @@ const SHOT_LABELS = {
 	attack:	"前衛アタック",
 	slice: "スライス",
 	cut: "カット",
-	drop: "ドロップ/ツイスト",
+	drop: "ドロップ",
 	twist: "ツイスト",
 
 	volley: "ボレー",
