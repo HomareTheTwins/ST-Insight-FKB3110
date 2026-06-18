@@ -6,13 +6,40 @@
 
 // フォア/バック不要ショット
 const noHandShots = new Set([
-	"サービスエース",
-	"フォルト",
-	"ダブルフォルト"
+	"serviceAce",
+	"fault",
+	"doubleFault"
 ])
 
 // 一時変数
 let selectedMissResult = null;	// 選択中のミス結果（ネット、アウト、サイドアウト、スキップなど）
+
+// ショット名のラベル
+const SHOT_LABELS = {
+	serviceAce: "サービスエース",
+	returnAce: "リターンエース",
+	fault: "フォルト",
+	doubleFault: "ダブルフォルト",
+	receive: "レシーブ",
+
+	stroke: "ストローク",
+	lob: "ロブ",
+	midLob: "中ロブ",
+	shortCross: "ショートクロス",
+
+	passing: "パッシング",
+	attack:	"前衛アタック",
+	slice: "スライス",
+	cut: "カット",
+	drop: "ドロップ/ツイスト",
+	twist: "ツイスト",
+
+	volley: "ボレー",
+	poach: "ポーチ",
+	smash: "スマッシュ",
+	lowVolley: "ローボレー",
+	highVolley: "ハイボレー",
+}
 
 // ミス結果のラベル
 const MISS_RESULT_LABELS = {
@@ -163,22 +190,22 @@ function initPlayers(){
 	・フォア/バック選択UI表示
 	・今後コースや結果の選択も追加する場合はここでstate.pendingShotに情報を追加していく★
    ===================================================== */
-function handleShotInput(name,type){
+function handleShotInput(shotKey,type){
 
 	// フォア/バック対象外ショット → 即処理
-	if(noHandShots.has(name)){
+	if(noHandShots.has(shotKey)){
 
 		if(type==="得点"){
-			recordShot(name)
+			recordShot(shotKey)
 		}else{
-			recordError(name, null, "skipped", "skipped")	// ミスタイプはスキップで記録
+			recordError(shotKey, null, "skipped", "skipped")	// ミスタイプはスキップで記録
 		}
 		return
 	}
 
 	// 一時保存
 	state.pendingShot = {
-		name:name,			// ショット名
+		shotKey:shotKey,	// ショットキー（stroke, lob etc...）
 		type:type,			// 得点 or 失点
 		hand:null,			// フォア/バックは後で選択
 		missResult:null,	// ミス結果（ネット、アウト、サイドアウト、スキップなど）
@@ -198,7 +225,7 @@ function selectHand(hand){
 
 	// 得点時処理
 	if(state.pendingShot.type==="得点"){
-		recordShot(state.pendingShot.name, hand)
+		recordShot(state.pendingShot.shotKey, hand)
 
 	// 失点時処理
 	}else{
@@ -212,7 +239,7 @@ function selectHand(hand){
 		}
 
 		// 簡易モードの場合はミスタイプ選択なしでrecordError呼び出す
-		recordError(state.pendingShot.name, hand, "skipped", "skipped")	// ミスタイプとミス結果はスキップで記録
+		recordError(state.pendingShot.shotKey, hand, "skipped", "skipped")	// ミスタイプとミス結果はスキップで記録
 	}
 
 	state.pendingShot = null
@@ -254,7 +281,7 @@ function selectMissType(missType){
 	state.pendingShot.missType = missType
 
 	recordError(
-		state.pendingShot.name,
+		state.pendingShot.shotKey,
 		state.pendingShot.hand,
 		state.pendingShot.missType || "skipped",	// ミスタイプが選択されていない場合は"skipped"で記録
 		state.pendingShot.missResult || "skipped"	// ミス結果が選択されていない場合は"skipped"で記録
@@ -654,17 +681,51 @@ function getWindLabel(wind){
 }
 
 /* =====================================================
+	ショットラベル取得処理
+   ===================================================== */
+function getShotLabel(shotName){
+	return SHOT_LABELS[shotName] || shotName || ""
+}
+
+/* =====================================================
    ショットのミスタイプラベル取得処理
    ===================================================== */
-function getMissTypeLabel(value){
-	return MISS_TYPE_LABELS[value] || value || ""
+function getMissTypeLabel(missType){
+	return MISS_TYPE_LABELS[missType] || missType || ""
 }
 
 /* =====================================================
 	ミス結果のラベル取得処理
    ===================================================== */
-function getMissResultLabel(value){
-	return MISS_RESULT_LABELS[value] || value || ""
+function getMissResultLabel(missResult){
+	return MISS_RESULT_LABELS[missResult] || missResult || ""
+}
+
+/* =====================================================
+   ショット集計用キー作成
+   ・内部集計用のkeyを作る
+   ・表示名ではなく、分析しやすい機械的なkeyにする
+   ===================================================== */
+function makeShotStatKey({ shotKey, hand }) {
+	return [
+		shotKey || "unknown",
+		hand || ""
+	].join("__")
+}
+
+
+/* =====================================================
+   ショット集計表示名作成
+   ・内部keyから画面表示用ラベルを作る
+   ・例: highVolley + フォア → ハイボレー（フォア）
+   ===================================================== */
+function getShotStatLabel(stat) {
+	if (!stat) return ""
+
+	const shotLabel = getShotLabel(stat.shotKey)
+	const handLabel = stat.hand ? `(${stat.hand})` : ""
+
+	return `${shotLabel}${handLabel}`
 }
 
 /* =====================================================
@@ -701,7 +762,6 @@ function saveState(){
 
 			serveStats: state.serveStats,
 			receiveStats: state.receiveStats,
-			shotStats: state.shotStats,
 
 			gameFinished: state.gameFinished,
 			matchFinished: state.matchFinished,
@@ -792,6 +852,9 @@ function init(){
 
 		// 設定画面のバージョン表示
 		updateTopEnvLabel()
+
+		// β版注意事項表示
+		updateBetaNotice()
 	}
 
 	// 試合中画面のバージョン表示

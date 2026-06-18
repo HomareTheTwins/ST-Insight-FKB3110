@@ -61,7 +61,7 @@ let state={
 	pendingShot:null,		// ショット一時状態
 	
 	/* ショットスタッツ */
-	shotStats:{},
+	//shotStats:{},
 	
 	/* 描画ロックフラグ */
 	_renderLock: false,
@@ -116,8 +116,6 @@ function initMatchState(){
 	state.selectedPlayerId = "A1"
 	state.history = []
 	state.historyStack = []
-
-	state.shotStats = {}
 
 	state.serveStats = {
 		A1:{ firstTotal:0, firstIn:0, secondTotal:0, secondIn:0 },
