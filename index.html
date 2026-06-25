@@ -23,12 +23,12 @@
 		<div id="setup">
 
 			<h3>味方</h3>
-			<input id="A1" placeholder="後衛">
-			<input id="A2" placeholder="前衛">
+			<input id="A1" placeholder="正クロス側">
+			<input id="A2" placeholder="逆クロス側">
 
 			<h3>対戦相手</h3>
-			<input id="B1" placeholder="後衛">
-			<input id="B2" placeholder="前衛">
+			<input id="B1" placeholder="正クロス側">
+			<input id="B2" placeholder="逆クロス側">
 
 			<br><br>
 
@@ -67,10 +67,7 @@
 		<!-- 試合開始後画面 -->
 		<div id="match" class="hidden">
 
-			<!-- スコアボード上の名前表示
-			<h3 id="pairLabel"></h3>
-			-->
-
+			<!-- スコアボード -->
 			<table class="scoreboard" id="scoreboard">
 				<colgroup>
 				<col style="width:150px;">	<!-- CSSと合わせる -->
@@ -83,7 +80,6 @@
 			</table>
 
 			<div class="player-area">
-
 				<div id="windArea" class="control-wind">	
 					<button class="windBtn" onclick="changeWind(this, '追風')"><span class="windArrow">↑</span>追風</button>
 					<button class="windBtn" onclick="changeWind(this, '向風')"><span class="windArrow">↓</span>向風</button>

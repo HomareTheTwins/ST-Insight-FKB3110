@@ -31,7 +31,7 @@ const SHOT_LABELS = {
 	attack:	"前衛アタック",
 	slice: "スライス",
 	cut: "カット",
-	drop: "ドロップ",
+	drop: "ドロップ/ツイスト",
 	twist: "ツイスト",
 
 	volley: "ボレー",
@@ -55,6 +55,16 @@ const MISS_TYPE_LABELS = {
 	attack: "攻めミス",
 	unforced: "凡ミス",
 	pressured: "押し負け",
+	skipped: "スキップ"
+}
+
+// コースラベル
+const COURSE_LABELS = {
+	cross: "クロス",
+	reverseCross: "逆クロス",
+	straight: "ストレート",
+	center: "センター",
+	short: "ショート",
 	skipped: "スキップ"
 }
 
@@ -125,6 +135,9 @@ function startMatch(){
 		state.singleB=state.players.B1 || state.players.B2
 	}
 	
+	// 選手名保存
+	saveOwnPlayerNames()
+
 	// サービス順作成
 	buildServerRotation()
 	
@@ -208,6 +221,7 @@ function handleShotInput(shotKey,type){
 		shotKey:shotKey,	// ショットキー（stroke, lob etc...）
 		type:type,			// 得点 or 失点
 		hand:null,			// フォア/バックは後で選択
+		course: null,		// コース（クロス、逆クロス、ストレート、センター、ショート、スキップ）
 		missResult:null,	// ミス結果（ネット、アウト、サイドアウト、スキップなど）
 		missType:null		// ミスの種類（凡ミス/攻めミス/押し負け）※失点のみ
 	}
@@ -225,8 +239,11 @@ function selectHand(hand){
 
 	// 得点時処理
 	if(state.pendingShot.type==="得点"){
-		recordShot(state.pendingShot.shotKey, hand)
-
+		// recordShot(state.pendingShot.shotKey, hand)
+		state.pendingShot.hand = hand	// 得点ショットにhand情報も追加する
+		removeHandChoice()
+		showCourseChoice()
+		return
 	// 失点時処理
 	}else{
 		state.pendingShot.hand = hand	// ミスのショットにhand情報も追加してからrecordError呼び出す
@@ -255,6 +272,39 @@ function cancelHand(){
 	removeHandChoice()
 	
 	createShotButtons()
+}
+
+/* =====================================================
+   コース選択処理
+   ===================================================== */
+function selectCourse(course){
+	console.log("selectCourse:", course)
+	console.log("state.pendingShot:", state.pendingShot)
+	if(!state.pendingShot) return
+
+	state.pendingShot.course = course
+
+	console.log("削除前:", document.getElementById("courseOverlay"))
+	removeCourseChoice()
+	console.log("削除後:", document.getElementById("courseOverlay"))
+
+	recordShot(
+		state.pendingShot.shotKey,
+		state.pendingShot.hand,
+		state.pendingShot.course
+	)
+	state.pendingShot = null
+}
+
+function cancelCourse(){
+
+	removeCourseChoice()
+
+	if(state.pendingShot){
+		state.pendingShot.course = null
+	}
+
+	showHandChoice()
 }
 
 /* =====================================================
@@ -299,7 +349,7 @@ function selectMissType(missType){
    ・スコア更新とゲーム判定
    ・サービス権の更新
    ===================================================== */
-function recordShot(shotName, hand = null){
+function recordShot(shotName, hand = null, course = null){
 	// Undo用
 	pushState()
 
@@ -317,7 +367,8 @@ function recordShot(shotName, hand = null){
 	addHistory({
 		type: "得点",
 		eventName: shotName,
-		hand: hand
+		hand: hand,
+		course: course
 	})
 	
 	// サーブのカウントアップ
@@ -603,6 +654,14 @@ function finishMatch(winner){
 ===================================================== */
 function nextMatch(){
 
+	saveOwnPlayerNames()
+	localStorage.removeItem("stInsightState")
+
+	loadOwnPlayerNames()
+	state.players.B1 = ""
+	state.players.B2 = ""
+	applyPlayerNamesToInputs()
+
 	/* 画面戻す */
 	document.getElementById("match").classList.add("hidden")
 	document.getElementById("setup").classList.remove("hidden")
@@ -640,36 +699,57 @@ function changeWind(btn,wind){
 
 	// 押下ボタン強調
 	btn.classList.add("activeWind")
-
-	// 風向きは得点入力のタイミングで履歴に出力する
-	// addHistory({
-	// 	type: "wind",
-	// 	eventName: `【風向き：${wind}】`
-	// })
 }
 
-// 風向きラベル取得	
-function getWindLabel(wind){
+// 各プレイヤー目線の風向きラベル取得	
+function getWindLabelForPlayer(wind, playerId){
 
-	switch(wind){
+	if(!wind) return ""
 
-		case "追風":
-			return "↑追風"
+	const isOwnPlayer = playerId && playerId.startsWith("A")
 
-		case "向風":
-			return "↓向風"
+	// プレイヤーが味方の場合
+	if(isOwnPlayer){
+		switch(wind){
+			case "追風":
+				return "↑追風"
 
-		case "左風":
-			return "→左風"
+			case "向風":
+				return "↓向風"
 
-		case "右風":
-			return "←右風"
+			case "左風":
+				return "→左風"
 
-		case "無風":
-			return "◯無風"
+			case "右風":
+				return "←右風"
 
-		default:
-			return wind
+			case "無風":
+				return "◯無風"
+
+			default:
+				return wind
+		}
+	// プレイヤーが対戦相手の場合
+	}else{
+		switch(wind){
+			case "追風":
+				return "↓向風"
+
+			case "向風":
+				return "↑追風"
+
+			case "左風":
+				return "←右風"
+
+			case "右風":
+				return "→左風"
+
+			case "無風":
+				return "◯無風"
+
+			default:
+				return wind
+		}
 	}
 }
 
@@ -699,6 +779,13 @@ function getMissTypeLabel(missType){
    ===================================================== */
 function getMissResultLabel(missResult){
 	return MISS_RESULT_LABELS[missResult] || missResult || ""
+}
+
+/* =====================================================
+	コースラベル取得処理
+   ===================================================== */
+function getCourseLabel(course){
+	return COURSE_LABELS[course] || course || ""
 }
 
 /* =====================================================
@@ -733,6 +820,8 @@ function getShotStatLabel(stat) {
    ===================================================== */
 function saveState(){
 
+	if(state.matchFinished) return
+	
 	localStorage.setItem(
 		"stInsightState",
 		JSON.stringify({
@@ -788,6 +877,48 @@ function loadState(){
 	Object.assign(state, parsedState)
 }
 
+/* 味方選手名保存 */
+function saveOwnPlayerNames(){
+	const ownPlayers = {
+		A1: state.players.A1 || "",
+		A2: state.players.A2 || ""
+	}
+
+	localStorage.setItem("stInsightOwnPlayers", JSON.stringify(ownPlayers))
+}
+
+/* 選手名読み込み */
+function loadOwnPlayerNames(){
+	const saved = localStorage.getItem("stInsightOwnPlayers")
+	if(!saved) return
+
+	try{
+		const ownPlayers = JSON.parse(saved)
+
+		if(ownPlayers.A1 !== undefined){
+			state.players.A1 = ownPlayers.A1
+		}
+
+		if(ownPlayers.A2 !== undefined){
+			state.players.A2 = ownPlayers.A2
+		}
+	}catch(e){
+		console.warn("味方選手名の読み込みに失敗しました", e)
+	}
+}
+
+function applyPlayerNamesToInputs(){
+	const inputA1 = document.getElementById("A1")
+	const inputA2 = document.getElementById("A2")
+	const inputB1 = document.getElementById("B1")
+	const inputB2 = document.getElementById("B2")
+
+	if(inputA1) inputA1.value = state.players.A1 || ""
+	if(inputA2) inputA2.value = state.players.A2 || ""
+	if(inputB1) inputB1.value = state.players.B1 || ""
+	if(inputB2) inputB2.value = state.players.B2 || ""
+}
+
 /* =====================================================
    試合リセット処理
    ・ローカルストレージの状態を削除してリロード
@@ -819,6 +950,34 @@ function finishMatchFlow(){
 	location.reload()
 }
 
+// ショットボタンの押下エフェクト追加
+function setupPressEffect(){
+	document.addEventListener("pointerdown", e => {
+		const target = e.target.closest(".shot-grid button, .stat-btn")
+		if(!target) return
+
+		target.classList.add("is-pressing")
+	})
+
+	document.addEventListener("pointerup", () => {
+		document.querySelectorAll(".is-pressing").forEach(el => {
+			el.classList.remove("is-pressing")
+		})
+	})
+
+	document.addEventListener("pointercancel", () => {
+		document.querySelectorAll(".is-pressing").forEach(el => {
+			el.classList.remove("is-pressing")
+		})
+	})
+
+	document.addEventListener("pointerleave", () => {
+		document.querySelectorAll(".is-pressing").forEach(el => {
+			el.classList.remove("is-pressing")
+		})
+	})
+}
+
 function setupEventHandlers(){
 	// ここにイベントハンドラ設定コードをまとめる（例: ボタンクリックなど）
 	const undoBtn = document.getElementById("undoBtn")
@@ -830,6 +989,9 @@ function setupEventHandlers(){
 	if(finishMatchBtn){
 		finishMatchBtn.addEventListener("click", confirmFinishMatch)
 	}
+
+	// ボタン押下効果追加
+	setupPressEffect()
 }
 
 function init(){
@@ -846,6 +1008,11 @@ function init(){
 		initPlayers()
 		updateUI()
 	}else{
+		loadOwnPlayerNames()
+		state.players.B1 = ""
+		state.players.B2 = ""
+		applyPlayerNamesToInputs()
+
 		// 試合前の場合は設定画面表示
 		document.getElementById("match").classList.add("hidden")
 		document.getElementById("setup").classList.remove("hidden")

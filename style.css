@@ -43,33 +43,37 @@ button{
 
 /* 選手ボタン中央配置 */
 .player-group {
-	display: flex;
-	gap: 6px;
-	justify-content: center;
-	overflow: hidden;
-	/* はみ出し制御 */
-	min-width: 0;
-	/* 崩れ防止 */
+	width:100%;
+	min-width:0;
+	/* overflow:hidden; */
 }
 
+/* 選手ボタン4つを必ず横幅内に収める */
+#players{
+	display:grid;
+	grid-template-columns:repeat(4, minmax(0, 1fr));
+	gap:6px;
+	width:100%;
+	min-width:0;
+}
+
+/* 選手ボタン */
 .playerBtn {
-	flex: 0 0 auto;
-	border: none;
-	border-radius: 6px;
-	padding: 6px;
-	/* 漢字3文字想定 */
-	font-size: 12px;
-	min-width: 60px;
+	min-width:0;
+	width:100%;
+	box-sizing:border-box;
+
+	border:none;
+	border-radius:6px;
+	padding:6px 4px;
+	font-size:12px;
+
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
 
 	box-shadow:
 		0 1px 2px rgba(0,0,0,0.08);
-}
-
-/* 選手ボタンの内側 */
-#players{
-	display:flex;
-	gap:6px;
-	justify-content:center;
 }
 
 .teamA {
@@ -224,6 +228,7 @@ button{
 	border-collapse: collapse;
 	margin-top: 10px;
 	table-layout: fixed;
+	max-width: 100%;
 }
 
 /* 共通 */
@@ -232,6 +237,8 @@ button{
 	border: 1px solid black;
 	padding: 6px 4px;
 	line-height: 1.2;
+	box-sizing: border-box;
+	overflow: hidden;
 }
 
 /* 名前列 */
@@ -250,8 +257,17 @@ button{
 .nameCell {
 	display: flex;
 	align-items: center;
+	min-width: 0;
+	overflow: hidden;
 }
 
+/* 名前セル内の文字部分 */
+.nameCell .playerName {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 /* GAME列 */
 .scoreboard th:last-child,
 .scoreboard td:last-child {
@@ -324,6 +340,14 @@ button{
 	border-radius: 10px;
 
 	position: relative;
+}
+
+/* ショットボタン押下中 */
+.shot-grid button.is-pressing,
+.stat-btn.is-pressing{
+	opacity:0.8;
+	color:#fff !important;
+	/* background-color:#f2f2f2 !important; */
 }
 
 /* ミスボタン */
@@ -480,6 +504,37 @@ button{
 .btn-cancel{
 	background:#dfe6ea;
 	color:#455a64;
+}
+
+/* コース選択ボタン */
+.btn-course-cross{
+	background:#d7f5da;
+	color:#1b5e20;
+	border:1px solid #9bd89d;
+}
+
+.btn-course-reverse{
+	background:#e3f2fd;
+	color:#0d47a1;
+	border:1px solid #90caf9;
+}
+
+.btn-course-straight{
+	background:#fff3cd;
+	color:#664d03;
+	border:1px solid #ffecb5;
+}
+
+.btn-course-center{
+	background:#fce4ec;
+	color:#880e4f;
+	border:1px solid #f8bbd0;
+}
+
+.btn-course-short{
+	background:#ede7f6;
+	color:#4527a0;
+	border:1px solid #b39ddb;
 }
 
 /* ミス結果選択ボタン */
@@ -640,13 +695,15 @@ button{
 #historyArea{
 	font-size:12px;
 	line-height:1.35;
-		display:flex;
+	display:flex;
 	flex-direction:column;
 	gap:2px;
+	overflow: hidden;
 }
 
 .history .stat-area {
 	background: #fff3e0;
+	overflow: hidden;
 }
 
 .history .stat-area.hidden{
@@ -654,27 +711,99 @@ button{
 }
 
 .historyRow{
-	font-size:12px;
+	font-size:10.5px;
 	line-height:1.35;
-		display:flex;
-	justify-content:space-between;
+	display:grid;
+	grid-template-columns:1.2em minmax(0, 1fr) auto;
 	align-items:center;
 	width:100%;
+	column-gap:2px;
+	overflow:hidden;
 }
 
+/* 得点/失点マーク */
+.historyMark{
+	width:1.2em;
+	flex-shrink:0;
+	text-align:center;
+	font-weight:bold;
+}
+
+/* 得点：○ */
+.historyMark.point-win{
+	color:#198754;
+}
+
+/* 失点：× */
+.historyMark.point-error{
+	color:#dc3545;
+}
+
+/* 選手名＋詳細 */
 .historyMain{
-	flex:1;
+	min-width:0;
+	display:grid;
+	grid-template-columns:3em minmax(0, 1fr);
+	align-items:center;
+	white-space:nowrap;
+	overflow:hidden;
+}
+
+/* 選手名 */
+.historyPlayer{
+	display:block;
+	width:3em;
+	min-width:0;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+/* 詳細 */
+.historyDetail{
+	min-width:0;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+/* 得点履歴に表示する凡例 */
+.historyGameHeader{
+	display:flex;
+	align-items:center;
+	gap:8px;
+	font-weight:bold;
+	margin:2px 0;
+}
+
+.historyLegend{
+	font-size:11px;
+	font-weight:normal;
+	color:#666;
+	white-space:nowrap;
+}
+
+.historyLegend .point-win{
+	color:#198754;
+	font-weight:bold;
+}
+
+.historyLegend .point-error{
+	color:#dc3545;
+	font-weight:bold;
 }
 
 /* 風向き表示 */
 .windInline{
-	font-size:11px;
+	font-size:9.5px;
 	font-weight:bold;
 	color:#4aaee8;
-	margin-left:8px;
+	margin-left:0;
 	display:inline-flex;
 	align-items:center;
-	gap:2px;
+	gap:1px;
+	white-space:nowrap;
+	justify-self:end;
 }
 
 /* サーブ確率 */
@@ -687,6 +816,38 @@ button{
 	background: #e1f5fe;
 }
 
+.stats-line {
+	display: grid;
+	grid-template-columns: 90px minmax(0, 1fr) minmax(0, 1fr);
+	gap: 2px;
+	margin-bottom: 2px;
+	align-items: center;
+}
+
+/* grid内で省略表示を効かせるため */
+.serve .stats-line > span {
+	min-width: 0;
+}
+
+/* 選手名 */
+.serve .stats-line .name {
+	text-align: left;
+	font-weight: bold;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 数値部分 */
+.serve .stats-line .stat {
+	text-align: left;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 /* ショット集計 */
 /* 色統一（ボタン＋中身） */
 .shot .stat-btn {
@@ -695,13 +856,6 @@ button{
 
 .shot .stat-area {
 	background: #e8f5e9;
-}
-
-.stats-line {
-	display: grid;
-	grid-template-columns: 60px 1fr 1fr;
-	gap: 2px;
-	margin-bottom: 2px;
 }
 
 /* 全ショット表示トグル */
@@ -746,15 +900,6 @@ button{
 
 .shot-toggle-btn:active{
 	transform:translateY(1px);
-}
-
-.stats-line .name {
-	text-align: left;
-	font-weight: bold;
-}
-
-.stats-line .stat {
-	text-align: left;
 }
 
 .toggle-header {
@@ -823,6 +968,12 @@ button{
 	color: white;
 	border: none;
 	border-radius: 6px;
+}
+
+/* ショットボタン（テキスト小） */
+.shot-small-text{
+	font-size:12px;
+	white-space:nowrap;
 }
 
 .hidden {

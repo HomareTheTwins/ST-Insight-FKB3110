@@ -60,6 +60,45 @@ function addHistory(eventData) {
 	}
 }
 
+/* 得点・失点から得点履歴に表示するマークを取得 */
+function getPointResultMark(type){
+	if(type === "得点") return "○"
+	if(type === "失点") return "×"
+	return ""
+}
+
+/* 得点・失点から得点履歴に表示するマークのクラスを取得 */
+function getPointResultClass(type){
+	if(type === "得点") return "point-win"
+	if(type === "失点") return "point-error"
+	return ""
+}
+
+/* 自チーム目線の得点マーク取得 */
+function getOwnTeamPointMark(historyItem, ownTeam = "A"){
+	if(!historyItem) return ""
+
+	const playerId = historyItem.playerId
+	const type = historyItem.type
+
+	if(!playerId) return ""
+	if(type!=="得点" && type !=="失点") return ""
+
+	const playerTeam = playerId.startsWith("A") ? "A" : "B"
+
+	const pointTeam = (type === "得点") ? playerTeam : (playerTeam === "A" ? "B" : "A")
+
+	return pointTeam === ownTeam ? "○" : "×"
+}
+
+function getOwnTeamPointClass(historyItem, ownTeam = "A"){
+	const mark = getOwnTeamPointMark(historyItem, ownTeam)
+	
+	if(mark === "○") return "point-win"
+	if(mark === "×") return "point-error"
+	return ""
+}
+
 /* =====================================================
    得点履歴表示
    ・得点/失点なら選手名＋内容表示
@@ -70,23 +109,31 @@ function renderHistory() {
 
 	let area = document.getElementById("historyArea")
 
-	let prevWind = null
 
 	area.innerHTML = state.history.map(h => {
 		// system履歴：ゲーム区切り
 		if (h.type === "system") {
-			prevWind = null // 風向きリセット
+			const legendHtml = (h.eventName === "1ゲーム目")
+				? `<span class="historyLegend">
+						<span class="point-win">○</span>→味方ポイント
+						<span class="point-error">×</span>→相手ポイント
+				</span>`
+				: ""
 
-			return `=== ${h.eventName} ===`
+			return `
+				<div class="historyGameHeader">
+					<span>=== ${h.eventName} ===</span>
+					${legendHtml}
+				</div>
+			`
 		}
 
-		// 通常履歴：選手名＋内容+風向き（風向きは前回から変わったときのみ表示）
-
-		// 風向きラベルの取得（例: 追風 → ↑追風）★getWindLabel関数でラベルを取得する形に変更
+		// 通常履歴：選手名＋内容+風向き
+		// 風向きラベルの取得（例: 追風 → ↑追風）★getWindLabelForPlayer関数でプレイヤーごとのラベルを取得する形に変更
 		let windHtml = ""
-		if (state.inputMode === "detail" && h.wind && h.wind !== prevWind) {
-			windHtml = `<span class="windInline"> ${getWindLabel(h.wind)}</span>`
-			prevWind = h.wind
+		const windLabel = getWindLabelForPlayer(h.wind, h.playerId)
+		if (state.inputMode === "detail" && windLabel){
+			windHtml = `<span class="windInline"> ${windLabel}</span>`
 		}
 
 		// 表示用イベントラベルの取得
@@ -95,6 +142,11 @@ function renderHistory() {
 		// hand情報がある場合は表示用イベントラベルにhand情報を追加（例: ストローク → ストローク（フォア））
 		if (h.hand) {
 			displayEventLabel += `(${h.hand})`
+		}
+
+		// コース情報がある場合は表示用イベントラベルにcourse情報を追加（）
+		if(h.course && h.course !== "skipped"){
+			displayEventLabel += `[${getCourseLabel(h.course)}]`
 		}
 
 		// ミス結果がある場合は表示用イベントラベルにミス結果情報を追加
@@ -107,13 +159,18 @@ function renderHistory() {
 			displayEventLabel += `[${getMissTypeLabel(h.missType)}]`
 		}
 
-		// 履歴行のHTMLを返す（例: 田中：得点-ストローク（フォア）【追風】）
+		const pointResultMark = getOwnTeamPointMark(h, "A")
+		const pointResultClass = getOwnTeamPointClass(h, "A")
+
+		// 履歴行のHTMLを返す（例: 〇 田中：得点-ストローク（フォア）【凡ミス】↑追風）
 		return `<span class="historyRow">
+					<span class="historyMark ${pointResultClass}">${pointResultMark}</span>
 					<span class="historyMain">
-						${h.player}：${h.type}-${displayEventLabel}
+						<span class="historyPlayer">${h.player}</span>
+						<span class="historyDetail">：${h.type}-${displayEventLabel}</span>
 					</span>
 						${windHtml}
-					</span>
+				</span>
 				`
 	}).join("")
 }

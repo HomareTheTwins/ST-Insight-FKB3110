@@ -186,10 +186,14 @@ function displayForNextGame(){
 	}
 
 	/* 試合終了時だけ得点履歴を閉じる */
+	const historyArea = document.getElementById("historyArea")
 	if(isFinished){
-		const historyArea = document.getElementById("historyArea")
 		if(historyArea){
 			historyArea.classList.add("hidden")
+		}
+	}else{
+		if(historyArea){
+			historyArea.classList.remove("hidden")
 		}
 	}
 }
@@ -255,6 +259,11 @@ function createShotButtons(){
 		btn.innerText=s.label
 		btn.className=s.type
 
+		// ドロップはツイストと現在統合しているため文字を小さくする
+		if(s.key === "drop"){
+			btn.classList.add("shot-small-text")
+		}
+
 		btn.disabled = state.matchFinished
 		btn.onclick=()=>handleShotInput(s.key,"得点")
 
@@ -282,6 +291,11 @@ function createShotButtons(){
 
 		btn.className=e.type
 		
+		// ドロップはツイストと現在統合しているため文字を小さくする
+		if(e.key === "drop"){
+			btn.classList.add("shot-small-text")
+		}
+
 		btn.disabled = state.matchFinished
 
 		if(e.isFault){
@@ -303,7 +317,7 @@ function createShotButtons(){
 
 /* 詳細モードボタン：ベース配列 */
 const detailShotsBase = [
-	{key :"ace",		type:"shot-back"},
+	{key:"ace",			type:"shot-back"},
 	{key:"stroke",		type:"shot-back"},
 	{key:"lob",			type:"shot-back"},
 	{key:"midLob",		type:"shot-back"},
@@ -325,7 +339,7 @@ const detailShotsBase = [
 
 /* 簡易モード：ベース配列 */
 const simpleShotsBase = [
-	{key :"ace",		type:"shot-back"},
+	{key:"ace",			type:"shot-back"},
 	{key:"stroke",		type:"shot-back"},
 	{key:"lob",			type:"shot-back"},
 	{key:"shortCross",	type:"shot-back"},
@@ -334,6 +348,7 @@ const simpleShotsBase = [
 	{key:"drop",		type:"shot-common"},
 
 	{key:"volley",		type:"shot-front"},
+	{key:"poach",		type:"shot-front"},
 	{key:"smash",		type:"shot-front"},
 ]
 
@@ -365,7 +380,7 @@ function createShots(isServer){
 
 /* 詳細モードボタン：ベース配列(ミス) */
 const detailMissShotsBase = [
-	{key :"fault",		type:"error-fault",isFault:true},
+	{key:"fault",		type:"error-fault",isFault:true},
 	{key:"receive",		type:"error-back",receiveOnly:true},
 
 	{key:"stroke",		type:"error-back"},
@@ -389,7 +404,7 @@ const detailMissShotsBase = [
 
 /* 簡易モード：ベース配列(ミス) */
 const simpleMissShotsBase = [
-	{key :"fault",		type:"error-fault",isFault:true},
+	{key:"fault",		type:"error-fault",isFault:true},
 	{key:"receive",		type:"error-back",receiveOnly:true},
 
 	{key:"stroke",		type:"error-back"},
@@ -400,6 +415,7 @@ const simpleMissShotsBase = [
 	{key:"drop",		type:"error-common"},
 	
 	{key:"volley",		type:"error-front"},
+	{key:"poach",		type:"error-front"},
 	{key:"smash",		type:"error-front"},
 ]
 
@@ -464,7 +480,7 @@ function showHandChoice(){
 -->
 			<button class="popup-btn btn-fore" id="btnFore">フォア</button>
 			<button class="popup-btn btn-back" id="btnBack">バック</button>
-			<button class="popup-btn btn-cancel" id="btnCancel">取消</button>
+			<button class="popup-btn btn-cancel" id="btnCancel">戻る</button>
 
 		</div>
 	`
@@ -487,6 +503,82 @@ function showHandChoice(){
 function removeHandChoice(){
 
 	let overlay = document.getElementById("handOverlay")
+
+	if(overlay){
+		overlay.remove()
+	}
+}
+
+// コースキー
+const courseOptions = [
+	{ key: "cross", label: "クロス" },
+	{ key: "reverseCross", label: "逆クロス" },
+	{ key: "straight", label: "ストレート" },
+	{ key: "center", label: "センター" },
+	{ key: "short", label: "ショート" }
+]
+
+/* =====================================================
+   コース選択UI
+   ===================================================== */
+function showCourseChoice(){
+
+	removeCourseChoice()
+
+	let overlay = document.createElement("div")
+	overlay.id = "courseOverlay"
+	overlay.className = "popup-overlay"
+
+	let shotName = getShotLabel(state.pendingShot?.shotKey) || state.pendingShot?.shotKey || ""
+
+	overlay.innerHTML = `
+		<div class="hand-popup win-popup">
+
+			<div class="hand-title">
+				${shotName}
+			</div>
+
+			<button class="popup-btn btn-course-cross" id="btnCourseCross">クロス</button>
+			<button class="popup-btn btn-course-reverse" id="btnCourseReverse">逆クロス</button>
+			<button class="popup-btn btn-course-straight" id="btnCourseStraight">ストレート</button>
+			<button class="popup-btn btn-course-center" id="btnCourseCenter">センター</button>
+			<button class="popup-btn btn-course-short" id="btnCourseShort">ショート</button>
+			<button class="popup-btn btn-course-skip" id="btnCourseSkip">スキップ</button>
+			<button class="popup-btn btn-cancel" id="btnCourseCancel">戻る</button>
+
+		</div>
+	`
+
+	document.body.appendChild(overlay)
+
+	document.getElementById("btnCourseCross").onclick =
+		()=>selectCourse("cross")
+
+	document.getElementById("btnCourseReverse").onclick =
+		()=>selectCourse("reverseCross")
+
+	document.getElementById("btnCourseStraight").onclick =
+		()=>selectCourse("straight")
+
+	document.getElementById("btnCourseCenter").onclick =
+		()=>selectCourse("center")
+
+	document.getElementById("btnCourseShort").onclick =
+		()=>selectCourse("short")
+
+	document.getElementById("btnCourseSkip").onclick =
+		()=>selectCourse("skipped")
+
+	document.getElementById("btnCourseCancel").onclick =
+		()=>cancelCourse()
+}
+
+/* =====================================================
+   コース選択UI削除
+   ===================================================== */
+function removeCourseChoice(){
+
+	const overlay = document.getElementById("courseOverlay")
 
 	if(overlay){
 		overlay.remove()
@@ -543,7 +635,7 @@ function showMissResultChoice(){
 			</button>
 
 			<button class="popup-btn btn-cancel" id="btnMissResultCancel">
-				取消
+				戻る
 			</button>
 
 		</div>
@@ -604,7 +696,7 @@ function showMissTypeChoice(){
 			</button>
 
 			<button class="popup-btn btn-cancel" id="btnMissCancel">
-				取消
+				戻る
 			</button>
 
 		</div>
